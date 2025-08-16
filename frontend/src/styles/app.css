@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+@theme {
+  /* Override default grays to ensure pure gray colors without blue tints */
+  --color-gray-50: #fafafa;
+  --color-gray-100: #f4f4f5;
+  --color-gray-200: #e4e4e7;
+  --color-gray-300: #d4d4d8;
+  --color-gray-400: #a1a1aa;
+  --color-gray-500: #71717a;
+  --color-gray-600: #52525b;
+  --color-gray-700: #3f3f46;
+  --color-gray-800: #27272a;
+  --color-gray-900: #18181b;
+  
+  /* Colores personalizados de la barbería */
+  --color-barber-primary: #000000;
+  --color-barber-gray-400: #a1a1aa;
+  --color-barber-gray-600: #52525b;
+  --color-barber-gold: #d97706;
+  --color-barber-gold-light: #f59e0b;
+  --color-barber-gold-dark: #92400e;
+  
+  /* Colores para panel administrativo */
+  --color-admin-primary: #1f2937;
+  --color-admin-secondary: #374151;
+  --color-admin-accent: #3b82f6;
+  --color-admin-success: #10b981;
+  --color-admin-warning: #f59e0b;
+  --color-admin-danger: #ef4444;
+  --color-admin-info: #06b6d4;
+  
+  /* Sidebar del admin */
+  --color-sidebar-bg: #1f2937;
+  --color-sidebar-hover: #374151;
+  --color-sidebar-active: #3b82f6;
+  --color-sidebar-text: #d1d5db;
+  --color-sidebar-text-active: #ffffff;
+  
+  /* Dashboard colors */
+  --color-dashboard-bg: #f9fafb;
+  --color-card-bg: #ffffff;
+  --color-border: #e5e7eb;
+  
+  /* Utilidades personalizadas */
+  --spacing-container-custom: 7rem;
+  --spacing-sidebar: 16rem;
+  --spacing-header: 4rem;
+}
+
+/* Estilos personalizados para el panel de barberos */
+.admin-barberos .stats-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 1) 100%);
+  backdrop-filter: blur(10px);
+}
+
+.admin-barberos .action-button {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-barberos .action-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.admin-barberos .barbero-avatar {
+  position: relative;
+}
+
+.admin-barberos .barbero-avatar::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, #f59e0b, #d97706, #92400e);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.admin-barberos .barbero-avatar:hover::before {
+  opacity: 1;
+}

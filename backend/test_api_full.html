@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Low Barber - API REST Completa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        h2 {
+            color: #555;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .response {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .admin-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <h1>🪒 Low Barber - API REST Completa</h1>
+    
+    <!-- Panel de Control -->
+    <div class="container">
+        <h2>🎛️ Panel de Control</h2>
+        <p><strong>Token actual:</strong> <span id="currentToken">No autenticado</span></p>
+        <button onclick="loginAsAdmin()">Login como Admin</button>
+        <button onclick="makeUserAdmin()">Convertir en Admin</button>
+        <button onclick="loginAsClient()">Login como Cliente</button>
+        <button onclick="clearToken()">Cerrar Sesión</button>
+        <div id="controlResponse" class="response" style="display: none;"></div>
+    </div>
+
+    <div class="grid">
+        <!-- SERVICIOS -->
+        <div class="container">
+            <h2>🛡️ Servicios</h2>
+            
+            <button onclick="getServices()">Ver Todos los Servicios</button>
+            <button onclick="getPopularServices()">Servicios Populares</button>
+            
+            <div class="admin-warning">
+                <strong>Solo Admins:</strong> Crear, actualizar y eliminar servicios
+            </div>
+            
+            <h3>Crear Servicio</h3>
+            <div class="form-group">
+                <label>Nombre:</label>
+                <input type="text" id="service_nombre" value="Corte Clásico" placeholder="Nombre del servicio">
+            </div>
+            <div class="form-group">
+                <label>Descripción:</label>
+                <textarea id="service_descripcion" placeholder="Descripción del servicio">Corte de cabello clásico con tijera y peinado</textarea>
+            </div>
+            <div class="form-group">
+                <label>Precio:</label>
+                <input type="number" id="service_precio" value="25.00" step="0.01" placeholder="Precio">
+            </div>
+            <div class="form-group">
+                <label>Duración (minutos):</label>
+                <input type="number" id="service_duracion" value="30" placeholder="Duración en minutos">
+            </div>
+            
+            <button onclick="createService()">Crear Servicio</button>
+            
+            <div id="servicesResponse" class="response" style="display: none;"></div>
+        </div>
+
+        <!-- BARBEROS -->
+        <div class="container">
+            <h2>✂️ Barberos</h2>
+            
+            <button onclick="getBarbers()">Ver Barberos Disponibles</button>
+            
+            <div class="admin-warning">
+                <strong>Solo Admins:</strong> Crear, actualizar y eliminar barberos
+            </div>
+            
+            <h3>Crear Barbero</h3>
+            <div class="form-group">
+                <label>Nombre:</label>
+                <input type="text" id="barber_nombre" value="Carlos Pérez" placeholder="Nombre del barbero">
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="barber_email" value="carlos@lowbarber.com" placeholder="Email">
+            </div>
+            <div class="form-group">
+                <label>Teléfono:</label>
+                <input type="text" id="barber_telefono" value="+1234567891" placeholder="Teléfono">
+            </div>
+            <div class="form-group">
+                <label>Contraseña:</label>
+                <input type="password" id="barber_password" value="123456" placeholder="Contraseña">
+            </div>
+            <div class="form-group">
+                <label>Confirmar Contraseña:</label>
+                <input type="password" id="barber_password_confirmation" value="123456" placeholder="Confirmar contraseña">
+            </div>
+            <div class="form-group">
+                <label>Especialidad:</label>
+                <textarea id="barber_especialidad" placeholder="Especialidad del barbero">Experto en cortes clásicos y modernos, barbas y bigotes</textarea>
+            </div>
+            
+            <button onclick="createBarber()">Crear Barbero</button>
+            
+            <div id="barbersResponse" class="response" style="display: none;"></div>
+        </div>
+
+        <!-- PRODUCTOS -->
+        <div class="container">
+            <h2>🛍️ Productos</h2>
+            
+            <button onclick="getProducts()">Ver Productos</button>
+            <button onclick="searchProducts()">Buscar "Shampoo"</button>
+            
+            <div class="admin-warning">
+                <strong>Solo Admins:</strong> Crear, actualizar y eliminar productos
+            </div>
+            
+            <h3>Crear Producto</h3>
+            <div class="form-group">
+                <label>Nombre:</label>
+                <input type="text" id="product_nombre" value="Shampoo Premium" placeholder="Nombre del producto">
+            </div>
+            <div class="form-group">
+                <label>Descripción:</label>
+                <textarea id="product_descripcion" placeholder="Descripción del producto">Shampoo premium para todo tipo de cabello con ingredientes naturales</textarea>
+            </div>
+            <div class="form-group">
+                <label>Precio:</label>
+                <input type="number" id="product_precio" value="15.99" step="0.01" placeholder="Precio">
+            </div>
+            <div class="form-group">
+                <label>Stock:</label>
+                <input type="number" id="product_stock" value="50" placeholder="Cantidad en stock">
+            </div>
+            <div class="form-group">
+                <label>Imagen URL:</label>
+                <input type="text" id="product_imagen" value="https://example.com/shampoo.jpg" placeholder="URL de la imagen">
+            </div>
+            
+            <button onclick="createProduct()">Crear Producto</button>
+            
+            <div id="productsResponse" class="response" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000';
+        let authToken = localStorage.getItem('authToken');
+
+        // Actualizar display del token
+        function updateTokenDisplay() {
+            const tokenDisplay = document.getElementById('currentToken');
+            if (authToken) {
+                tokenDisplay.textContent = `${authToken.substring(0, 50)}...`;
+            } else {
+                tokenDisplay.textContent = 'No autenticado';
+            }
+        }
+        updateTokenDisplay();
+
+        // Función para hacer peticiones HTTP
+        async function makeRequest(method, endpoint, data = null, requiresAuth = false) {
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+
+            if (requiresAuth && authToken) {
+                options.headers['Authorization'] = `Bearer ${authToken}`;
+            }
+
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, options);
+                const result = await response.json();
+                return { status: response.status, data: result };
+            } catch (error) {
+                return { status: 0, data: { error: 'Error de conexión', message: error.message } };
+            }
+        }
+
+        // Mostrar respuesta en el DOM
+        function showResponse(elementId, response, isSuccess = false) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `response ${isSuccess ? 'success' : 'error'}`;
+            element.textContent = JSON.stringify(response.data, null, 2);
+        }
+
+        // Funciones de autenticación
+        async function loginAsAdmin() {
+            const response = await makeRequest('POST', '/api/auth/login', {
+                email: 'juan@test.com',
+                password: '123456'
+            });
+
+            if (response.status === 200) {
+                authToken = response.data.access_token;
+                localStorage.setItem('authToken', authToken);
+                updateTokenDisplay();
+                showResponse('controlResponse', response, true);
+                alert('Login exitoso - Ahora haz clic en "Convertir en Admin"');
+            } else {
+                showResponse('controlResponse', response, false);
+                alert('Error en login: ' + response.data.message);
+            }
+        }
+
+        async function makeUserAdmin() {
+            if (!authToken) {
+                alert('Primero debes hacer login');
+                return;
+            }
+
+            const response = await makeRequest('POST', '/api/auth/make-admin', {}, true);
+            showResponse('controlResponse', response, response.status === 200);
+
+            if (response.status === 200) {
+                alert('¡Ahora eres administrador! Puedes crear servicios, barberos y productos.');
+            } else {
+                alert('Error: ' + response.data.message);
+            }
+        }
+
+        async function loginAsClient() {
+            alert('Funcionalidad disponible - usar el formulario principal de login');
+        }
+
+        function clearToken() {
+            authToken = null;
+            localStorage.removeItem('authToken');
+            updateTokenDisplay();
+            alert('Sesión cerrada');
+        }
+
+        // FUNCIONES DE SERVICIOS
+        async function getServices() {
+            const response = await makeRequest('GET', '/api/services');
+            showResponse('servicesResponse', response, response.status === 200);
+        }
+
+        async function getPopularServices() {
+            const response = await makeRequest('GET', '/api/services/popular');
+            showResponse('servicesResponse', response, response.status === 200);
+        }
+
+        async function createService() {
+            const data = {
+                nombre: document.getElementById('service_nombre').value,
+                descripcion: document.getElementById('service_descripcion').value,
+                precio: parseFloat(document.getElementById('service_precio').value),
+                duracion: parseInt(document.getElementById('service_duracion').value)
+            };
+
+            const response = await makeRequest('POST', '/api/services', data, true);
+            showResponse('servicesResponse', response, response.status === 201);
+        }
+
+        // FUNCIONES DE BARBEROS
+        async function getBarbers() {
+            const response = await makeRequest('GET', '/api/barbers');
+            showResponse('barbersResponse', response, response.status === 200);
+        }
+
+        async function createBarber() {
+            const data = {
+                nombre: document.getElementById('barber_nombre').value,
+                email: document.getElementById('barber_email').value,
+                telefono: document.getElementById('barber_telefono').value,
+                password: document.getElementById('barber_password').value,
+                password_confirmation: document.getElementById('barber_password_confirmation').value,
+                especialidad: document.getElementById('barber_especialidad').value
+            };
+
+            const response = await makeRequest('POST', '/api/barbers', data, true);
+            showResponse('barbersResponse', response, response.status === 201);
+        }
+
+        // FUNCIONES DE PRODUCTOS
+        async function getProducts() {
+            const response = await makeRequest('GET', '/api/products');
+            showResponse('productsResponse', response, response.status === 200);
+        }
+
+        async function searchProducts() {
+            const response = await makeRequest('GET', '/api/products/search?q=Shampoo');
+            showResponse('productsResponse', response, response.status === 200);
+        }
+
+        async function createProduct() {
+            const data = {
+                nombre: document.getElementById('product_nombre').value,
+                descripcion: document.getElementById('product_descripcion').value,
+                precio: parseFloat(document.getElementById('product_precio').value),
+                stock: parseInt(document.getElementById('product_stock').value),
+                imagen: document.getElementById('product_imagen').value
+            };
+
+            const response = await makeRequest('POST', '/api/products', data, true);
+            showResponse('productsResponse', response, response.status === 201);
+        }
+    </script>
+</body>
+</html>
