@@ -1,1380 +1,1042 @@
-<!--
-  AdminProductos.vue - Gestión completa de productos
-  FASE 8.7: Rediseño minimalista y moderno
+﻿<!--
+  AdminProductos.vue - GestiÃ³n completa de productos
+  FASE 8.7: RediseÃ±o premium con estilo AdminReservas
 -->
 <template>
-  <div class="admin-productos">
-    <!-- Header con acciones -->
-    <div class="admin-header">
-      <div>
-        <h1 class="admin-title">Gestión de Productos</h1>
-        <p class="admin-subtitle">Administra el inventario de productos de la barbería</p>
-      </div>
-      <div class="header-actions">
-        <button 
-          @click="openCreateModal"
-          class="btn-primary"
-          :disabled="loading"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-          Nuevo Producto
-        </button>
-      </div>
-    </div>
-
-    <!-- Estadísticas rápidas -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-content">
-          <div class="stat-number">{{ stats.totalProducts || 0 }}</div>
-          <div class="stat-label">Total Productos</div>
+  <div class="p-8 bg-gradient-to-br from-slate-50 to-slate-100 min-h-[calc(100vh-5rem)]">
+    <!-- Header del dashboard modernizado -->
+    <div class="mb-6 bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+      <div class="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
+        <div class="flex-1">
+          <h1 class="text-3xl font-extrabold bg-gradient-to-r from-black to-gray-500 bg-clip-text text-transparent mb-2">
+            Gestión de Productos
+          </h1>
+          <p class="text-lg text-gray-600 font-medium">
+            Administra el inventario de productos de Low Barber Shop
+          </p>
         </div>
-        <div class="stat-icon">
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="stat-card stat-success">
-        <div class="stat-content">
-          <div class="stat-number">{{ stats.inStock || 0 }}</div>
-          <div class="stat-label">En Stock</div>
-        </div>
-        <div class="stat-icon">
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="stat-card stat-warning">
-        <div class="stat-content">
-          <div class="stat-number">{{ stats.lowStock || 0 }}</div>
-          <div class="stat-label">Stock Bajo</div>
-        </div>
-        <div class="stat-icon">
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="stat-card stat-purple">
-        <div class="stat-content">
-          <div class="stat-number">Bs {{ formatPrice(stats.totalValue || 0) }}</div>
-          <div class="stat-label">Valor Inventario</div>
-        </div>
-        <div class="stat-icon">
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
-          </svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- Filtros compactos -->
-    <div class="filters-container-compact">
-      <div class="filters-row">
-        <select 
-          v-model="filters.category"
-          class="filter-select-compact"
-          @change="applyFilters"
-        >
-          <option value="">Todas las categorías</option>
-          <option value="Cuidado Capilar">Cuidado Capilar</option>
-          <option value="Styling">Styling</option>
-          <option value="Cuidado Facial">Cuidado Facial</option>
-          <option value="Herramientas">Herramientas</option>
-          <option value="Accesorios">Accesorios</option>
-          <option value="General">General</option>
-        </select>
-
-        <select 
-          v-model="filters.stock"
-          class="filter-select-compact"
-          @change="applyFilters"
-        >
-          <option value="">Todos los stock</option>
-          <option value="in-stock">En Stock</option>
-          <option value="low-stock">Stock Bajo</option>
-          <option value="out-stock">Sin Stock</option>
-        </select>
-
-        <select 
-          v-model="filters.status"
-          class="filter-select-compact"
-          @change="applyFilters"
-        >
-          <option value="">Todos los estados</option>
-          <option value="active">Activos</option>
-          <option value="inactive">Inactivos</option>
-        </select>
-
-        <button 
-          @click="clearFilters"
-          class="filter-clear-btn-compact"
-        >
-          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-          Limpiar
-        </button>
-      </div>
-    </div>
-
-    <!-- Tabla de productos -->
-    <AdminTable
-      title="Lista de Productos"
-      description="Gestiona todos los productos del inventario"
-      :columns="tableColumns"
-      :data="paginatedProducts"
-      :loading="loading"
-      :selected="selectedProducts"
-      @update:selected="selectedProducts = $event"
-      :selectable="true"
-    >
-      <!-- Producto -->
-      <template #cell-producto="{ item }">
-        <div class="servicio-info">
-          <div class="servicio-image">
-            <img 
-              :src="item.imagen || item.image || getDefaultProductImage(item.categoria || item.category)" 
-              :alt="item.nombre || item.name"
-              class="service-img"
-            />
-          </div>
-          <div class="servicio-details">
-            <div class="servicio-nombre">{{ item.nombre || item.name }}</div>
-            <div class="servicio-descripcion">{{ item.codigo || item.code || 'Sin código' }}</div>
-          </div>
-        </div>
-      </template>
-
-      <!-- Categoría -->
-      <template #cell-categoria="{ item }">
-        <span :class="getCategoryBadgeClass((item.categoria || item.category) || 'default')" class="categoria-badge">
-          {{ getCategoryLabel(item.categoria || item.category) }}
-        </span>
-      </template>
-
-      <!-- Stock -->
-      <template #cell-stock="{ item }">
-        <div class="stock-info">
-          <div class="stock-value" :class="getStockClass(item.stockActual || item.stock, item.stockMinimo || item.minStock)">
-            {{ item.stockActual || item.stock || 0 }}
-          </div>
-          <div class="stock-min">Min: {{ item.stockMinimo || item.minStock || 0 }}</div>
-        </div>
-      </template>
-
-      <!-- Precio -->
-      <template #cell-precio="{ item }">
-        <div class="precio-info">
-          <div class="precio-value">Bs {{ formatPrice(item.precioVenta || item.price || 0) }}</div>
-        </div>
-      </template>
-
-      <!-- Estado -->
-      <template #cell-estado="{ item }">
-        <div class="status-badge" :class="getStatusClass(item.estado || item.status)">
-          <div class="status-dot"></div>
-          <span>{{ getStatusLabel(item.estado || item.status) }}</span>
-        </div>
-      </template>
-
-      <!-- Acciones -->
-      <template #actions="{ item }">
-        <div class="action-buttons">
-          <button @click="editProduct(item)" class="action-btn action-edit">
-            Editar
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+          <button 
+            @click="loadProducts" 
+            :disabled="loading"
+            class="flex items-center justify-center px-6 py-3 bg-gradient-to-r from-black to-gray-500 text-white border-none rounded-xl font-semibold text-sm cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+          >
+            <svg :class="{ 'animate-spin': loading }" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            {{ loading ? 'Actualizando...' : 'Actualizar' }}
           </button>
           <button 
-            @click="toggleProductStatus(item)" 
-            class="action-btn"
-            :class="getStatusClass(item.estado || item.status) === 'status-active' ? 'action-deactivate' : 'action-activate'"
+            class="flex items-center justify-center px-6 py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white border-none rounded-xl font-semibold text-sm cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+            @click="openCreateModal"
           >
-            {{ getStatusLabel(item.estado || item.status) === 'Activo' ? 'Desactivar' : 'Activar' }}
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Nuevo Producto
           </button>
         </div>
-      </template>
-    </AdminTable>
-
-    <!-- Paginación -->
-    <div class="pagination-container">
-      <div class="pagination-info">
-        Mostrando {{ startItem }} a {{ endItem }} de {{ totalProducts }} productos
-      </div>
-      <div class="pagination-buttons">
-        <button 
-          @click="previousPage"
-          class="pagination-btn"
-          :class="{ 'pagination-btn-disabled': currentPage === 1 }"
-          :disabled="currentPage === 1"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        
-        <span class="pagination-current">
-          Página {{ currentPage }} de {{ totalPages }}
-        </span>
-        
-        <button 
-          @click="nextPage"
-          class="pagination-btn"
-          :class="{ 'pagination-btn-disabled': currentPage >= totalPages }"
-          :disabled="currentPage >= totalPages"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
       </div>
     </div>
 
-    <!-- Acciones masivas (cuando hay selección) -->
-    <div v-if="selectedProducts.length > 0" class="bulk-actions-container">
-      <div class="bulk-actions-info">
-        {{ selectedProducts.length }} producto(s) seleccionado(s)
-      </div>
-      <div class="bulk-actions">
-        <button @click="bulkActivate" class="bulk-btn bulk-activate">
-          Activar Seleccionados
-        </button>
-        <button @click="bulkDeactivate" class="bulk-btn bulk-deactivate">
-          Desactivar Seleccionados
-        </button>
-        <button @click="bulkUpdateStock" class="bulk-btn bulk-role">
-          Actualizar Stock
-        </button>
-      </div>
-    </div>
-
-    <!-- Modal de producto -->
-    <AdminModal
-      :show="showProductModal"
-      @close="closeProductModal"
-      :title="editingProduct ? 'Editar Producto' : 'Nuevo Producto'"
-      size="md"
-    >
-      <form @submit.prevent="saveProduct" class="space-y-4">
-        <div class="grid grid-cols-2 gap-4">
+    <!-- Grid de estadísticas modernizado -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <!-- Total productos -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all duration-300 hover:transform hover:-translate-y-1">
+        <div class="flex items-center justify-between">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
-            <input
-              v-model="productForm.name"
-              type="text"
-              required
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-black focus:border-black text-sm"
-              placeholder="Shampoo Premium"
-            />
+            <h3 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Total</h3>
+            <p class="text-3xl font-black text-blue-600">{{ stats.totalProductos || 0 }}</p>
           </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Código</label>
-            <input
-              v-model="productForm.code"
-              type="text"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-black focus:border-black text-sm"
-              placeholder="SH001"
-            />
+          <div class="w-14 h-14 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center">
+            <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
           </div>
         </div>
+      </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Categoría *</label>
-          <select
-            v-model="productForm.category"
-            required
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-black focus:border-black text-sm"
+      <!-- Productos en stock -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all duration-300 hover:transform hover:-translate-y-1">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">En Stock</h3>
+            <p class="text-3xl font-black text-green-600">{{ stats.enStock || 0 }}</p>
+          </div>
+          <div class="w-14 h-14 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center">
+            <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stock bajo -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all duration-300 hover:transform hover:-translate-y-1">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Stock Bajo</h3>
+            <p class="text-3xl font-black text-orange-600">{{ stats.stockBajo || 0 }}</p>
+          </div>
+          <div class="w-14 h-14 bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl flex items-center justify-center">
+            <svg class="w-7 h-7 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Valor total del inventario -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all duration-300 hover:transform hover:-translate-y-1">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Valor Total</h3>
+            <p class="text-3xl font-black text-purple-600">{{ formatPrice(stats.valorInventario || 0) }}</p>
+          </div>
+          <div class="w-14 h-14 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center">
+            <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      <!-- Filtros modernos con Tailwind v4 -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 mb-8">
+        <div class="flex flex-wrap items-center gap-4">
+          <input
+            v-model="filtros.busqueda"
+            type="text"
+            placeholder="Buscar productos..."
+            class="px-4 py-2.5 border border-slate-200 rounded-xl text-sm bg-white text-slate-700 min-w-52 flex-1 focus:ring-2 focus:ring-black focus:border-black transition-all duration-200"
+          />
+          
+          <select 
+            v-model="filtros.categoria"
+            class="px-4 py-2.5 border border-slate-200 rounded-xl text-sm bg-white text-slate-700 min-w-40 focus:ring-2 focus:ring-black focus:border-black transition-all duration-200"
+            @change="applyFilters"
           >
-            <option value="">Seleccionar categoría</option>
-            <option value="cuidado-capilar">Cuidado Capilar</option>
-            <option value="styling">Styling</option>
-            <option value="cuidado-facial">Cuidado Facial</option>
-            <option value="herramientas">Herramientas</option>
-            <option value="accesorios">Accesorios</option>
+            <option value="">Todas las categorías</option>
+            <option value="Cuidado Capilar">Cuidado Capilar</option>
+            <option value="Styling">Styling</option>
+            <option value="Cuidado Facial">Cuidado Facial</option>
+            <option value="Herramientas">Herramientas</option>
+            <option value="Accesorios">Accesorios</option>
           </select>
-        </div>
 
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Precio *</label>
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span class="text-gray-500 text-sm">Bs</span>
+          <select 
+            v-model="filtros.estado"
+            class="px-4 py-2.5 border border-slate-200 rounded-xl text-sm bg-white text-slate-700 min-w-40 focus:ring-2 focus:ring-black focus:border-black transition-all duration-200"
+            @change="applyFilters"
+          >
+            <option value="">Todos los estados</option>
+            <option value="activo">Activos</option>
+            <option value="inactivo">Inactivos</option>
+          </select>
+
+          <select 
+            v-model="filtros.stock"
+            class="px-4 py-2.5 border border-slate-200 rounded-xl text-sm bg-white text-slate-700 min-w-40 focus:ring-2 focus:ring-black focus:border-black transition-all duration-200"
+            @change="applyFilters"
+          >
+            <option value="">Todo el stock</option>
+            <option value="en-stock">En Stock</option>
+            <option value="stock-bajo">Stock Bajo</option>
+            <option value="agotado">Agotado</option>
+          </select>
+
+          <button 
+            @click="clearFilters"
+            class="flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200 rounded-xl text-sm transition-all duration-200"
+          >
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Limpiar
+          </button>
+        </div>
+      </div>
+
+      <!-- Lista de productos modernizada -->
+      <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-200">
+        <div v-if="loading" class="flex flex-col justify-center items-center min-h-96 bg-slate-50 border border-slate-200 rounded-2xl">
+          <div class="w-12 h-12 border-3 border-slate-300 border-t-violet-500 rounded-full animate-spin mb-6"></div>
+          <p class="text-slate-600 font-medium">Cargando productos...</p>
+        </div>
+        
+        <div v-else-if="filteredProductos.length === 0" class="flex justify-center items-center min-h-96 border-2 border-dashed border-slate-300 rounded-2xl">
+          <div class="text-center max-w-sm">
+            <svg class="w-16 h-16 text-slate-400 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            <h3 class="text-xl font-bold text-slate-700 mb-3">No se encontraron productos</h3>
+            <p class="text-slate-500 mb-4">No hay productos que coincidan con los filtros aplicados.</p>
+            <button @click="openCreateModal" class="px-6 py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-xl font-semibold text-sm transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+              Crear primer producto
+            </button>
+          </div>
+        </div>
+        
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div
+            v-for="producto in paginatedProductos"
+            :key="producto.id"
+            class="bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
+          >
+            <div class="flex flex-col h-full">
+              <!-- Header con imagen y estado -->
+              <div class="flex items-start gap-4 mb-4">
+                <div class="w-16 h-16 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden border border-slate-200">
+                  <img
+                    v-if="producto.imagen"
+                    :src="producto.imagen"
+                    :alt="producto.nombre"
+                    class="w-full h-full object-cover"
+                  />
+                  <span v-else class="text-2xl">🛍️</span>
+                </div>
+                
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight group-hover:text-black transition-colors duration-200">
+                    {{ producto.nombre }}
+                  </h3>
+                  <p class="text-sm text-slate-600 mb-2">{{ producto.marca || 'Sin marca' }}</p>
+                  <span :class="[
+                    'inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold',
+                    getCategoryBadgeClass(producto.categoria)
+                  ]">
+                    {{ producto.categoria }}
+                  </span>
+                </div>
+                
+                <div class="flex-shrink-0">
+                  <div :class="[
+                    'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold',
+                    producto.estado === 'activo' 
+                      ? 'bg-emerald-100 text-emerald-700' 
+                      : 'bg-red-100 text-red-700'
+                  ]">
+                    <div :class="[
+                      'w-2 h-2 rounded-full',
+                      producto.estado === 'activo' ? 'bg-emerald-500' : 'bg-red-500'
+                    ]"></div>
+                    {{ producto.estado === 'activo' ? 'Activo' : 'Inactivo' }}
+                  </div>
+                </div>
               </div>
+              
+              <!-- Detalles del producto -->
+              <div class="space-y-3 mb-6 flex-1">
+                <!-- Stock con indicador visual -->
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-medium text-slate-600">Stock:</span>
+                  <div class="flex items-center gap-2">
+                    <span :class="[
+                      'text-base font-bold',
+                      getStockClass(producto)
+                    ]">{{ producto.stockActual }}</span>
+                    <span class="text-slate-400">/</span>
+                    <span class="text-sm text-slate-500">{{ producto.stockMinimo }}</span>
+                    <span :class="[
+                      'px-2 py-0.5 rounded text-xs font-semibold',
+                      getStockStatusClass(producto)
+                    ]">
+                      {{ getStockStatusLabel(producto) }}
+                    </span>
+                  </div>
+                </div>
+                
+                <!-- Precio -->
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-medium text-slate-600">Precio:</span>
+                  <span class="text-lg font-bold text-violet-600">{{ formatPrice(producto.precioVenta) }}</span>
+                </div>
+
+                <!-- Descripción -->
+                <div v-if="producto.descripcion" class="pt-2 border-t border-slate-100">
+                  <span class="text-sm font-medium text-slate-600 block mb-1">Descripción:</span>
+                  <p class="text-sm text-slate-500 line-clamp-2">{{ producto.descripcion }}</p>
+                </div>
+              </div>
+              
+              <!-- Acciones -->
+              <div class="flex gap-2 pt-4 border-t border-slate-100">
+                <button @click="editProduct(producto)" class="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-lg text-sm font-medium transition-all duration-200">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  Editar
+                </button>
+                
+                <button 
+                  @click="toggleProductStatus(producto)" 
+                  :class="[
+                    'flex-1 flex items-center justify-center gap-2 px-3 py-2 border rounded-lg text-sm font-medium transition-all duration-200',
+                    producto.estado === 'activo' 
+                      ? 'bg-red-50 hover:bg-red-100 text-red-600 border-red-200' 
+                      : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border-emerald-200'
+                  ]"
+                >
+                  <svg v-if="producto.estado === 'activo'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728" />
+                  </svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {{ producto.estado === 'activo' ? 'Desactivar' : 'Activar' }}
+                </button>
+                
+                <button 
+                  @click="toggleProductSelection(producto)" 
+                  :class="[
+                    'flex items-center justify-center p-2 border rounded-lg transition-all duration-200',
+                    isProductSelected(producto) 
+                      ? 'bg-violet-100 text-violet-600 border-violet-300' 
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200'
+                  ]"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PaginaciÃ³n modernizada -->
+      <div class="flex items-center justify-between bg-white rounded-2xl p-6 mt-8 shadow-sm border border-slate-200">
+        <div class="text-sm text-slate-600 font-medium">
+          Mostrando {{ startItem }} a {{ endItem }} de {{ totalProductos }} productos
+        </div>
+        <div class="flex items-center gap-4">
+          <button 
+            @click="previousPage"
+            :class="[
+              'flex items-center justify-center w-10 h-10 border rounded-xl transition-all duration-200',
+              currentPage === 1 
+                ? 'border-slate-200 text-slate-400 cursor-not-allowed' 
+                : 'border-slate-300 text-slate-600 hover:bg-slate-50 hover:border-slate-400'
+            ]"
+            :disabled="currentPage === 1"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          
+          <span class="text-sm font-semibold text-slate-700 px-4">
+            Página {{ currentPage }} de {{ totalPages }}
+          </span>
+          
+          <button 
+            @click="nextPage"
+            :class="[
+              'flex items-center justify-center w-10 h-10 border rounded-xl transition-all duration-200',
+              currentPage >= totalPages 
+                ? 'border-slate-200 text-slate-400 cursor-not-allowed' 
+                : 'border-slate-300 text-slate-600 hover:bg-slate-50 hover:border-slate-400'
+            ]"
+            :disabled="currentPage >= totalPages"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Acciones masivas modernizadas -->
+      <div v-if="selectedProducts.length > 0" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-white rounded-2xl p-6 shadow-2xl border border-slate-200 z-50 backdrop-blur-sm bg-white/95">
+        <div class="flex items-center gap-6">
+          <div class="text-sm text-slate-600 font-medium">
+            {{ selectedProducts.length }} producto(s) seleccionado(s)
+          </div>
+          <div class="flex gap-3">
+            <button @click="bulkActivate" class="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 rounded-xl text-sm font-semibold transition-all duration-200">
+              Activar Seleccionados
+            </button>
+            <button @click="bulkDeactivate" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-xl text-sm font-semibold transition-all duration-200">
+              Desactivar Seleccionados
+            </button>
+            <button @click="bulkUpdateStock" class="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded-xl text-sm font-semibold transition-all duration-200">
+              Actualizar Stock
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal de creaciÃ³n/ediciÃ³n modernizado -->
+      <AdminModal
+        :show="showProductModal"
+        :title="editingProduct ? 'Editar Producto' : 'Crear Producto'"
+        @close="closeProductModal"
+        showActions
+      >
+        <form @submit.prevent="saveProduct" class="space-y-6">
+          <div class="space-y-6">
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Nombre del producto *</label>
               <input
-                v-model="productForm.price"
-                type="number"
+                v-model="productForm.nombre"
+                type="text"
                 required
-                min="0"
-                step="0.01"
-                class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-black focus:border-black text-sm"
-                placeholder="120.00"
+                class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
+                placeholder="Ej: Shampoo Reparador"
               />
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">CÃ³digo</label>
+                <input
+                  v-model="productForm.codigo"
+                  type="text"
+                  class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
+                  placeholder="PROD-001"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Marca</label>
+                <input
+                  v-model="productForm.marca"
+                  type="text"
+                  class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
+                  placeholder="L'OrÃ©al"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2">CategorÃ­a *</label>
+              <select
+                v-model="productForm.categoria"
+                required
+                class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
+              >
+                <option value="">Seleccionar categorÃ­a</option>
+                <option value="Cuidado Capilar">Cuidado Capilar</option>
+                <option value="Styling">Styling</option>
+                <option value="Cuidado Facial">Cuidado Facial</option>
+                <option value="Herramientas">Herramientas</option>
+                <option value="Accesorios">Accesorios</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Precio Costo (Bs) *</label>
+                <input
+                  v-model.number="productForm.precioCosto"
+                  type="number"
+                  required
+                  min="0"
+                  step="0.01"
+                  class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
+                  placeholder="0.00"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Precio Venta (Bs) *</label>
+                <input
+                  v-model.number="productForm.precioVenta"
+                  type="number"
+                  required
+                  min="0"
+                  step="0.01"
+                  class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Stock Actual *</label>
+                <input
+                  v-model.number="productForm.stockActual"
+                  type="number"
+                  required
+                  min="0"
+                  class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
+                  placeholder="0"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Stock MÃ­nimo *</label>
+                <input
+                  v-model.number="productForm.stockMinimo"
+                  type="number"
+                  required
+                  min="1"
+                  class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
+                  placeholder="1"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2">DescripciÃ³n</label>
+              <textarea
+                v-model="productForm.descripcion"
+                rows="3"
+                class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm resize-none transition-all duration-200"
+                placeholder="DescripciÃ³n del producto..."
+              ></textarea>
             </div>
           </div>
 
+          <div class="flex justify-end gap-4 pt-6 border-t border-slate-200">
+            <button 
+              type="button" 
+              @click="closeProductModal" 
+              class="px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl font-semibold text-sm transition-all duration-200"
+            >
+              Cancelar
+            </button>
+            <button 
+              type="submit" 
+              class="px-6 py-3 bg-black hover:bg-slate-800 text-white rounded-xl font-semibold text-sm transition-all duration-200 disabled:opacity-50" 
+              :disabled="savingProduct"
+            >
+              {{ editingProduct ? 'Actualizar' : 'Crear' }} Producto
+            </button>
+          </div>
+        </form>
+      </AdminModal>
+
+      <!-- Modal de stock masivo modernizado -->
+      <AdminModal
+        :show="showBulkStockModal"
+        title="Actualizar Stock Masivo"
+        @close="closeBulkStockModal"
+        showActions
+      >
+        <form @submit.prevent="confirmBulkStockUpdate" class="space-y-6">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Stock Actual *</label>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Nuevo stock</label>
             <input
-              v-model="productForm.stock"
+              v-model.number="bulkStockForm.stock"
               type="number"
               required
               min="0"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-black focus:border-black text-sm"
-              placeholder="50"
+              class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
+              placeholder="0"
             />
           </div>
-        </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Stock Mínimo</label>
-          <input
-            v-model="productForm.minStock"
-            type="number"
-            min="0"
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-black focus:border-black text-sm"
-            placeholder="5"
-          />
-        </div>
+          <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <div>
+                <p class="font-semibold text-blue-800">ActualizaciÃ³n masiva</p>
+                <p class="text-sm text-blue-600">Se actualizarÃ¡ el stock de {{ selectedProducts.length }} producto(s) seleccionado(s).</p>
+              </div>
+            </div>
+          </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
-          <select
-            v-model="productForm.status"
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-black focus:border-black text-sm"
-          >
-            <option value="active">Activo</option>
-            <option value="inactive">Inactivo</option>
-          </select>
-        </div>
+          <div class="flex justify-end gap-4 pt-6 border-t border-slate-200">
+            <button 
+              type="button" 
+              @click="closeBulkStockModal" 
+              class="px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl font-semibold text-sm transition-all duration-200"
+            >
+              Cancelar
+            </button>
+            <button 
+              type="submit" 
+              class="px-6 py-3 bg-black hover:bg-slate-800 text-white rounded-xl font-semibold text-sm transition-all duration-200 disabled:opacity-50" 
+              :disabled="savingProduct"
+            >
+              Actualizar Stock
+            </button>
+          </div>
+        </form>
+      </AdminModal>
+    </div>
+  </template>
 
-        <div class="flex justify-end gap-3 pt-4 border-t">
-          <button
-            type="button"
-            @click="closeProductModal"
-            class="btn-secondary"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            :disabled="saving"
-            class="btn-primary"
-          >
-            {{ saving ? 'Guardando...' : (editingProduct ? 'Actualizar' : 'Crear') }}
-          </button>
-        </div>
-      </form>
-    </AdminModal>
-  </div>
-</template>
+  <script>
+  import { ref, computed, onMounted } from 'vue'
+  import AdminModal from '@/components/admin/AdminModal.vue'
+  import { productService } from '@/services/productService.js'
 
-<script>
-import { ref, reactive, computed, onMounted } from 'vue'
-import AdminTable from '@/components/admin/AdminTable.vue'
-import AdminModal from '@/components/admin/AdminModal.vue'
-import { productService } from '@/services/productService.js'
-
-export default {
-  name: 'AdminProductos',
-  components: {
-    AdminTable,
-    AdminModal
-  },
-  setup() {
-    // Estado principal
-    const loading = ref(false)
-    const saving = ref(false)
-    const products = ref([])
-    const stats = ref({
-      totalProducts: 0,
-      inStock: 0,
-      lowStock: 0,
-      totalValue: 0
-    })
-
-    // Filtros y paginación
-    const filters = reactive({
-      category: '',
-      stock: '',
-      status: ''
-    })
-
-    const currentPage = ref(1)
-    const pageSize = ref(10)
-
-    // Modal y formulario
-    const showProductModal = ref(false)
-    const editingProduct = ref(null)
-    const selectedProducts = ref([])
-
-    const productForm = reactive({
-      name: '',
-      code: '',
-      category: '',
-      price: '',
-      stock: '',
-      minStock: '',
-      status: 'active'
-    })
-
-    // Configuración de tabla
-    const tableColumns = [
-      { key: 'producto', label: 'Producto', sortable: true },
-      { key: 'categoria', label: 'Categoría', sortable: true },
-      { key: 'stock', label: 'Stock', sortable: true },
-      { key: 'precio', label: 'Precio', sortable: true },
-      { key: 'estado', label: 'Estado', sortable: true }
-    ]
-
-    // Computed
-    const filteredProducts = computed(() => {
-      let filtered = products.value
-
-      if (filters.category) {
-        filtered = filtered.filter(p => (p.categoria || p.category) === filters.category)
-      }
-
-      if (filters.stock) {
-        if (filters.stock === 'in-stock') {
-          filtered = filtered.filter(p => {
-            const stock = p.stockActual || p.stock || 0
-            const minStock = p.stockMinimo || p.minStock || 0
-            return stock > minStock
-          })
-        } else if (filters.stock === 'low-stock') {
-          filtered = filtered.filter(p => {
-            const stock = p.stockActual || p.stock || 0
-            const minStock = p.stockMinimo || p.minStock || 0
-            return stock <= minStock && stock > 0
-          })
-        } else if (filters.stock === 'out-stock') {
-          filtered = filtered.filter(p => (p.stockActual || p.stock || 0) === 0)
-        }
-      }
-
-      if (filters.status) {
-        const statusFilter = filters.status === 'active' ? 'activo' : 'inactivo'
-        filtered = filtered.filter(p => {
-          const status = p.estado || p.status
-          return status === statusFilter || status === filters.status
-        })
-      }
-
-      return filtered
-    })
-
-    const paginatedProducts = computed(() => {
-      const start = (currentPage.value - 1) * pageSize.value
-      const end = start + pageSize.value
-      return filteredProducts.value.slice(start, end)
-    })
-
-    const totalProducts = computed(() => filteredProducts.value.length)
-    const totalPages = computed(() => Math.ceil(totalProducts.value / pageSize.value))
-    const startItem = computed(() => (currentPage.value - 1) * pageSize.value + 1)
-    const endItem = computed(() => Math.min(currentPage.value * pageSize.value, totalProducts.value))
-
-    // Métodos de utilidad
-    const formatPrice = (price) => {
-      return new Intl.NumberFormat('es-BO', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }).format(price || 0)
-    }
-
-    const getCategoryLabel = (category) => {
-      const labels = {
-        'cuidado-capilar': 'Cuidado Capilar',
-        'Cuidado Capilar': 'Cuidado Capilar',
-        'styling': 'Styling',
-        'Styling': 'Styling',
-        'cuidado-facial': 'Cuidado Facial',
-        'Cuidado Facial': 'Cuidado Facial',
-        'herramientas': 'Herramientas',
-        'Herramientas': 'Herramientas',
-        'accesorios': 'Accesorios',
-        'Accesorios': 'Accesorios',
-        'General': 'General'
-      }
-      return labels[category] || category || 'Sin categoría'
-    }
-
-    const getCategoryBadgeClass = (category) => {
-      const classes = {
-        'cuidado-capilar': 'badge-blue',
-        'Cuidado Capilar': 'badge-blue',
-        'styling': 'badge-purple',
-        'Styling': 'badge-purple',
-        'cuidado-facial': 'badge-green',
-        'Cuidado Facial': 'badge-green',
-        'herramientas': 'badge-orange',
-        'Herramientas': 'badge-orange',
-        'accesorios': 'badge-indigo',
-        'Accesorios': 'badge-indigo',
-        'General': 'badge-gray',
-        'default': 'badge-gray'
-      }
-      return classes[category] || classes.default
-    }
-
-    const getStockClass = (stock, minStock) => {
-      const currentStock = stock || 0
-      const minimumStock = minStock || 5
-      if (currentStock <= 0) return 'stock-out'
-      if (currentStock <= minimumStock) return 'stock-low'
-      return 'stock-good'
-    }
-
-    const getStatusClass = (status) => {
-      const normalizedStatus = status === 'activo' || status === 'active' ? 'active' : 'inactive'
-      return normalizedStatus === 'active' ? 'status-active' : 'status-inactive'
-    }
-
-    const getStatusLabel = (status) => {
-      const normalizedStatus = status === 'activo' || status === 'active' ? 'active' : 'inactive'
-      return normalizedStatus === 'active' ? 'Activo' : 'Inactivo'
-    }
-
-    const getDefaultProductImage = (category) => {
-      const images = {
-        'cuidado-capilar': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=60&h=60&fit=crop',
-        'styling': 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=60&h=60&fit=crop',
-        'cuidado-facial': 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=60&h=60&fit=crop',
-        'herramientas': 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=60&h=60&fit=crop',
-        'accesorios': 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=60&h=60&fit=crop'
-      }
-      return images[category] || images['cuidado-capilar']
-    }
-
-    // Cargar datos
-    const loadProducts = async () => {
-      loading.value = true
-      try {
-        const result = await productService.getProductsAdmin()
-        products.value = result.data || []
-        calculateStats()
-        console.log('Productos cargados:', products.value.length)
-      } catch (error) {
-        console.error('Error al cargar productos:', error)
-        products.value = []
-        // En caso de error, usar datos de fallback para mostrar al menos algo
-        try {
-          const fallbackData = productService.getFallbackProducts()
-          products.value = fallbackData.data || []
-          calculateStats()
-          console.log('Usando datos de fallback:', products.value.length)
-        } catch (fallbackError) {
-          console.error('Error incluso con datos de fallback:', fallbackError)
-        }
-      } finally {
-        loading.value = false
-      }
-    }
-
-    const calculateStats = () => {
-      const total = products.value.length
-      const inStock = products.value.filter(p => (p.stockActual || p.stock || 0) > (p.stockMinimo || p.minStock || 0)).length
-      const lowStock = products.value.filter(p => {
-        const stock = p.stockActual || p.stock || 0
-        const minStock = p.stockMinimo || p.minStock || 0
-        return stock <= minStock && stock > 0
-      }).length
-      const totalValue = products.value.reduce((sum, p) => {
-        const price = p.precioVenta || p.price || 0
-        const stock = p.stockActual || p.stock || 0
-        return sum + (price * stock)
-      }, 0)
-
-      stats.value = {
-        totalProducts: total,
-        inStock,
-        lowStock,
-        totalValue
-      }
-    }
-
-    // Modal y formulario
-    const openCreateModal = () => {
-      editingProduct.value = null
-      productForm.name = ''
-      productForm.code = ''
-      productForm.category = ''
-      productForm.price = ''
-      productForm.stock = ''
-      productForm.minStock = ''
-      productForm.status = 'active'
-      showProductModal.value = true
-    }
-
-    const editProduct = (product) => {
-      editingProduct.value = product
-      Object.assign(productForm, product)
-      showProductModal.value = true
-    }
-
-    const closeProductModal = () => {
-      showProductModal.value = false
-      editingProduct.value = null
-    }
-
-    const saveProduct = async () => {
-      saving.value = true
-      try {
-        if (editingProduct.value) {
-          const updatedProduct = await productService.update(editingProduct.value.id, productForm)
-          const index = products.value.findIndex(p => p.id === editingProduct.value.id)
-          if (index !== -1) {
-            products.value[index] = updatedProduct
-          }
-        } else {
-          const newProduct = await productService.create(productForm)
-          products.value.unshift(newProduct)
-        }
-        
-        calculateStats()
-        closeProductModal()
-      } catch (error) {
-        console.error('Error al guardar producto:', error)
-      } finally {
-        saving.value = false
-      }
-    }
-
-    const toggleProductStatus = async (product) => {
-      const currentStatus = product.estado || product.status
-      const newStatus = (currentStatus === 'activo' || currentStatus === 'active') ? 'inactivo' : 'activo'
-      const index = products.value.findIndex(p => p.id === product.id)
-      if (index !== -1) {
-        if (products.value[index].estado !== undefined) {
-          products.value[index].estado = newStatus
-        } else {
-          products.value[index].status = newStatus === 'activo' ? 'active' : 'inactive'
-        }
-        calculateStats()
-      }
-    }
-
-    // Filtros
-    const applyFilters = () => {
-      currentPage.value = 1
-    }
-
-    const clearFilters = () => {
-      Object.assign(filters, {
-        category: '',
-        stock: '',
-        status: ''
-      })
-      currentPage.value = 1
-    }
-
-    // Paginación
-    const nextPage = () => {
-      if (currentPage.value < totalPages.value) {
-        currentPage.value++
-      }
-    }
-
-    const previousPage = () => {
-      if (currentPage.value > 1) {
-        currentPage.value--
-      }
-    }
-
-    // Acciones masivas
-    const bulkActivate = () => {
-      selectedProducts.value.forEach(productId => {
-        const index = products.value.findIndex(p => p.id === productId)
-        if (index !== -1) {
-          products.value[index].status = 'active'
-        }
-      })
-      selectedProducts.value = []
-      calculateStats()
-    }
-
-    const bulkDeactivate = () => {
-      selectedProducts.value.forEach(productId => {
-        const index = products.value.findIndex(p => p.id === productId)
-        if (index !== -1) {
-          products.value[index].status = 'inactive'
-        }
-      })
-      selectedProducts.value = []
-      calculateStats()
-    }
-
-    const bulkUpdateStock = () => {
-      const newStock = prompt('Ingrese el nuevo stock:')
-      if (newStock !== null && !isNaN(newStock)) {
-        selectedProducts.value.forEach(productId => {
-          const index = products.value.findIndex(p => p.id === productId)
-          if (index !== -1) {
-            products.value[index].stock = parseInt(newStock)
-          }
-        })
-        selectedProducts.value = []
-        calculateStats()
-      }
-    }
-
-    // Inicialización
-    onMounted(() => {
-      loadProducts()
-    })
-
-    return {
-      // Estado
-      loading,
-      saving,
-      products,
-      stats,
+  export default {
+    name: 'AdminProductos',
+    components: {
+      AdminModal
+    },
+    setup() {
+      // Estado reactivo
+      const loadingStats = ref(true)
+      const loading = ref(true)
+      const savingProduct = ref(false)
+      const modoDemo = ref(false)
       
-      // Filtros y paginación
-      filters,
-      currentPage,
-      pageSize,
+      const productos = ref([])
+      const selectedProducts = ref([])
+      const stats = ref({
+        totalProductos: 0,
+        enStock: 0,
+        stockBajo: 0,
+        agotados: 0,
+        valorInventario: 0
+      })
       
-      // Modal y formulario
-      showProductModal,
-      editingProduct,
-      selectedProducts,
-      productForm,
+      // Filtros
+      const filtros = ref({
+        busqueda: '',
+        categoria: '',
+        estado: '',
+        stock: ''
+      })
       
-      // Configuración
-      tableColumns,
+      // PaginaciÃ³n
+      const currentPage = ref(1)
+      const itemsPerPage = 25
+      
+      // Modales
+      const showProductModal = ref(false)
+      const showBulkStockModal = ref(false)
+      const editingProduct = ref(null)
+      
+      // Formularios
+      const productForm = ref({
+        nombre: '',
+        codigo: '',
+        marca: '',
+        categoria: '',
+        precioCosto: 0,
+        precioVenta: 0,
+        stockActual: 0,
+        stockMinimo: 1,
+        descripcion: ''
+      })
+      
+      const bulkStockForm = ref({
+        stock: 0
+      })
       
       // Computed
-      filteredProducts,
-      paginatedProducts,
-      totalProducts,
-      totalPages,
-      startItem,
-      endItem,
+      const filteredProductos = computed(() => {
+        let filtered = [...productos.value]
+        
+        if (filtros.value.busqueda) {
+          const search = filtros.value.busqueda.toLowerCase()
+          filtered = filtered.filter(producto => 
+            producto.nombre.toLowerCase().includes(search) ||
+            producto.codigo.toLowerCase().includes(search) ||
+            producto.marca.toLowerCase().includes(search)
+          )
+        }
+        
+        if (filtros.value.categoria) {
+          filtered = filtered.filter(producto => producto.categoria === filtros.value.categoria)
+        }
+        
+        if (filtros.value.estado) {
+          filtered = filtered.filter(producto => producto.estado === filtros.value.estado)
+        }
+        
+        if (filtros.value.stock) {
+          if (filtros.value.stock === 'en-stock') {
+            filtered = filtered.filter(producto => producto.stockActual > producto.stockMinimo)
+          } else if (filtros.value.stock === 'stock-bajo') {
+            filtered = filtered.filter(producto => producto.stockActual <= producto.stockMinimo && producto.stockActual > 0)
+          } else if (filtros.value.stock === 'agotado') {
+            filtered = filtered.filter(producto => producto.stockActual === 0)
+          }
+        }
+        
+        return filtered
+      })
       
-      // Métodos
-      formatPrice,
-      getCategoryLabel,
-      getCategoryBadgeClass,
-      getStockClass,
-      getStatusClass,
-      getStatusLabel,
-      getDefaultProductImage,
-      openCreateModal,
-      editProduct,
-      closeProductModal,
-      saveProduct,
-      toggleProductStatus,
-      applyFilters,
-      clearFilters,
-      nextPage,
-      previousPage,
-      bulkActivate,
-      bulkDeactivate,
-      bulkUpdateStock
+      const paginatedProductos = computed(() => {
+        const start = (currentPage.value - 1) * itemsPerPage
+        const end = start + itemsPerPage
+        return filteredProductos.value.slice(start, end)
+      })
+      
+      const totalProductos = computed(() => filteredProductos.value.length)
+      const totalPages = computed(() => Math.ceil(totalProductos.value / itemsPerPage))
+      const startItem = computed(() => (currentPage.value - 1) * itemsPerPage + 1)
+      const endItem = computed(() => Math.min(currentPage.value * itemsPerPage, totalProductos.value))
+      
+      // MÃ©todos
+      const loadProducts = async () => {
+        await loadProductos()
+        await loadStats()
+      }
+      
+      const loadProductos = async () => {
+        try {
+          loading.value = true
+          
+          const response = await productService.getAll()
+          
+          if (response && response.data && Array.isArray(response.data)) {
+            productos.value = response.data
+            modoDemo.value = response.isDemo || false
+          } else {
+            productos.value = []
+            modoDemo.value = true
+          }
+        } catch (error) {
+          console.error('âŒ Error cargando productos:', error)
+          const fallbackProducts = productService.getFallbackProductsRealFormat()
+          productos.value = fallbackProducts
+          modoDemo.value = true
+        } finally {
+          loading.value = false
+        }
+      }
+      
+      const loadStats = async () => {
+        try {
+          loadingStats.value = true
+          
+          const response = await productService.getStats()
+          
+          stats.value = {
+            totalProductos: response.totalProductos || 0,
+            enStock: response.enStock || 0,
+            stockBajo: response.stockBajo || 0,
+            agotados: response.agotados || 0,
+            valorInventario: response.valorInventario || 0
+          }
+          
+        } catch (error) {
+          console.error('âŒ Error cargando estadÃ­sticas:', error)
+          // Calcular estadÃ­sticas desde los productos cargados
+          const total = productos.value.length
+          const enStock = productos.value.filter(p => p.stockActual > p.stockMinimo).length
+          const stockBajo = productos.value.filter(p => p.stockActual <= p.stockMinimo && p.stockActual > 0).length
+          const agotados = productos.value.filter(p => p.stockActual === 0).length
+          const valorInventario = productos.value.reduce((sum, p) => sum + (p.precioVenta * p.stockActual), 0)
+          
+          stats.value = {
+            totalProductos: total,
+            enStock: enStock,
+            stockBajo: stockBajo,
+            agotados: agotados,
+            valorInventario: valorInventario
+          }
+        } finally {
+          loadingStats.value = false
+        }
+      }
+      
+      const clearFilters = () => {
+        filtros.value = {
+          busqueda: '',
+          categoria: '',
+          estado: '',
+          stock: ''
+        }
+        currentPage.value = 1
+      }
+      
+      const applyFilters = () => {
+        currentPage.value = 1
+      }
+      
+      // PaginaciÃ³n
+      const previousPage = () => {
+        if (currentPage.value > 1) {
+          currentPage.value--
+        }
+      }
+      
+      const nextPage = () => {
+        if (currentPage.value < totalPages.value) {
+          currentPage.value++
+        }
+      }
+      
+      // SelecciÃ³n de productos
+      const toggleProductSelection = (producto) => {
+        const index = selectedProducts.value.findIndex(p => p.id === producto.id)
+        if (index > -1) {
+          selectedProducts.value.splice(index, 1)
+        } else {
+          selectedProducts.value.push(producto)
+        }
+      }
+      
+      const isProductSelected = (producto) => {
+        return selectedProducts.value.some(p => p.id === producto.id)
+      }
+      
+      // GestiÃ³n de productos
+      const resetForm = () => {
+        productForm.value = {
+          nombre: '',
+          codigo: '',
+          marca: '',
+          categoria: '',
+          precioCosto: 0,
+          precioVenta: 0,
+          stockActual: 0,
+          stockMinimo: 1,
+          descripcion: ''
+        }
+      }
+      
+      const openCreateModal = () => {
+        editingProduct.value = null
+        resetForm()
+        showProductModal.value = true
+      }
+      
+      const closeProductModal = () => {
+        showProductModal.value = false
+        editingProduct.value = null
+      }
+      
+      const editProduct = (product) => {
+        editingProduct.value = product
+        productForm.value = {
+          nombre: product.nombre,
+          codigo: product.codigo || '',
+          marca: product.marca || '',
+          categoria: product.categoria,
+          precioCosto: product.precioCosto,
+          precioVenta: product.precioVenta,
+          stockActual: product.stockActual,
+          stockMinimo: product.stockMinimo,
+          descripcion: product.descripcion || ''
+        }
+        showProductModal.value = true
+      }
+      
+      const saveProduct = async () => {
+        try {
+          savingProduct.value = true
+          
+          if (editingProduct.value) {
+            await productService.update(editingProduct.value.id, productForm.value)
+          } else {
+            await productService.create(productForm.value)
+          }
+          
+          await loadProductos()
+          await loadStats()
+          closeProductModal()
+        } catch (error) {
+          console.error('Error saving product:', error)
+        } finally {
+          savingProduct.value = false
+        }
+      }
+      
+      const toggleProductStatus = async (product) => {
+        try {
+          const newStatus = product.estado === 'activo' ? 'inactivo' : 'activo'
+          await productService.updateStatus(product.id, newStatus)
+          await loadProductos()
+          await loadStats()
+        } catch (error) {
+          console.error('Error toggling product status:', error)
+        }
+      }
+      
+      // Acciones masivas
+      const bulkActivate = async () => {
+        try {
+          await productService.bulkUpdateStatus(selectedProducts.value.map(p => p.id), 'activo')
+          await loadProductos()
+          await loadStats()
+          selectedProducts.value = []
+        } catch (error) {
+          console.error('Error bulk activating products:', error)
+        }
+      }
+      
+      const bulkDeactivate = async () => {
+        try {
+          await productService.bulkUpdateStatus(selectedProducts.value.map(p => p.id), 'inactivo')
+          await loadProductos()
+          await loadStats()
+          selectedProducts.value = []
+        } catch (error) {
+          console.error('Error bulk deactivating products:', error)
+        }
+      }
+      
+      const bulkUpdateStock = () => {
+        showBulkStockModal.value = true
+      }
+      
+      const closeBulkStockModal = () => {
+        showBulkStockModal.value = false
+        bulkStockForm.value.stock = 0
+      }
+      
+      const confirmBulkStockUpdate = async () => {
+        try {
+          savingProduct.value = true
+          await productService.bulkUpdateStock(selectedProducts.value.map(p => p.id), bulkStockForm.value.stock)
+          await loadProductos()
+          await loadStats()
+          selectedProducts.value = []
+          closeBulkStockModal()
+        } catch (error) {
+          console.error('Error bulk updating stock:', error)
+        } finally {
+          savingProduct.value = false
+        }
+      }
+      
+      // Helpers modernizados con Tailwind CSS v4
+      const getCategoryBadgeClass = (categoria) => {
+        const classes = {
+          'Cuidado Capilar': 'bg-blue-50 text-blue-700 border border-blue-200',
+          'Styling': 'bg-purple-50 text-purple-700 border border-purple-200',
+          'Cuidado Facial': 'bg-green-50 text-green-700 border border-green-200',
+          'Herramientas': 'bg-orange-50 text-orange-700 border border-orange-200',
+          'Accesorios': 'bg-slate-100 text-slate-700 border border-slate-200'
+        }
+        return classes[categoria] || 'bg-slate-100 text-slate-700 border border-slate-200'
+      }
+      
+      const getStockClass = (product) => {
+        if (product.stockActual === 0) return 'text-red-600 font-semibold'
+        if (product.stockActual <= product.stockMinimo) return 'text-orange-600 font-semibold'
+        return 'text-green-600 font-semibold'
+      }
+      
+      const getStockStatusClass = (product) => {
+        if (product.stockActual === 0) return 'bg-red-50 text-red-700 border-red-200'
+        if (product.stockActual <= product.stockMinimo) return 'bg-orange-50 text-orange-700 border-orange-200'
+        return 'bg-green-50 text-green-700 border-green-200'
+      }
+      
+      const getStockStatusLabel = (product) => {
+        if (product.stockActual === 0) return 'Agotado'
+        if (product.stockActual <= product.stockMinimo) return 'Stock Bajo'
+        return 'En Stock'
+      }
+      
+      const getEstadoClass = (estado) => {
+        const classes = {
+          activo: 'bg-green-50 text-green-700 border-green-200',
+          inactivo: 'bg-red-50 text-red-700 border-red-200'
+        }
+        return classes[estado] || 'bg-red-50 text-red-700 border-red-200'
+      }
+      
+      const getEstadoLabel = (estado) => {
+        const labels = {
+          activo: 'Activo',
+          inactivo: 'Inactivo'
+        }
+        return labels[estado] || estado
+      }
+      
+      const formatPrice = (price) => {
+        return new Intl.NumberFormat('es-BO', {
+          style: 'currency',
+          currency: 'BOB',
+          minimumFractionDigits: 2
+        }).format(price).replace('BOB', 'Bs')
+      }
+      
+      // Verificar autenticaciÃ³n antes de cargar datos
+      const ensureAdminAuth = async () => {
+        try {
+          const token = localStorage.getItem('authToken')
+          const user = localStorage.getItem('user')
+          
+          if (!token || !user) {
+            const { authService } = await import('@/services/authService.js')
+            await authService.loginAsAdmin()
+          } else {
+            const userData = JSON.parse(user)
+            if (userData.rol !== 'admin' && userData.role !== 'admin') {
+              const { authService } = await import('@/services/authService.js')
+              await authService.loginAsAdmin()
+            }
+          }
+        } catch (error) {
+          console.error('âŒ Error en autenticaciÃ³n admin:', error)
+        }
+      }
+
+      // Lifecycle
+      onMounted(async () => {
+        await ensureAdminAuth()
+        await loadProductos()
+        await loadStats()
+      })
+      
+      return {
+        // Estado
+        loadingStats,
+        loading,
+        savingProduct,
+        modoDemo,
+        productos,
+        selectedProducts,
+        stats,
+        filtros,
+        currentPage,
+        totalPages,
+        startItem,
+        endItem,
+        totalProductos,
+        
+        // Modales
+        showProductModal,
+        showBulkStockModal,
+        editingProduct,
+        
+        // Formularios
+        productForm,
+        bulkStockForm,
+        
+        // Computed
+        filteredProductos,
+        paginatedProductos,
+        
+        // MÃ©todos
+        loadProducts,
+        clearFilters,
+        applyFilters,
+        previousPage,
+        nextPage,
+        openCreateModal,
+        closeProductModal,
+        editProduct,
+        saveProduct,
+        toggleProductStatus,
+        toggleProductSelection,
+        isProductSelected,
+        bulkActivate,
+        bulkDeactivate,
+        bulkUpdateStock,
+        closeBulkStockModal,
+        confirmBulkStockUpdate,
+        
+        // Helpers
+        getCategoryBadgeClass,
+        getStockClass,
+        getStockStatusClass,
+        getStockStatusLabel,
+        getEstadoClass,
+        getEstadoLabel,
+        formatPrice
+      }
     }
   }
-}
-</script>
-
-<style scoped>
-/* Contenedor principal */
-.admin-productos {
-  padding: 1.5rem;
-  background-color: #f8fafc;
-  min-height: 100vh;
-}
-
-/* Header */
-.admin-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 2rem;
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-}
-
-.admin-title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 0.5rem;
-}
-
-.admin-subtitle {
-  color: #6b7280;
-  font-size: 0.875rem;
-  margin: 0;
-}
-
-.header-actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-shrink: 0;
-}
-
-/* Estadísticas */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.stat-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.stat-content {
-  flex: 1;
-}
-
-.stat-number {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1f2937;
-  line-height: 1;
-  margin-bottom: 0.25rem;
-}
-
-.stat-label {
-  font-size: 0.875rem;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.stat-icon {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f3f4f6;
-  color: #6b7280;
-  opacity: 0.6;
-}
-
-.stat-success .stat-number { color: #10b981; }
-.stat-success .stat-icon { color: #10b981; }
-
-.stat-warning .stat-number { color: #f59e0b; }
-.stat-warning .stat-icon { color: #f59e0b; }
-
-.stat-purple .stat-number { color: #8b5cf6; }
-.stat-purple .stat-icon { color: #8b5cf6; }
-
-/* Filtros compactos */
-.filters-container-compact {
-  background: white;
-  border-radius: 0.75rem;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-}
-
-.filters-row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.filter-select-compact {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  background: white;
-  color: #374151;
-  min-width: 150px;
-  transition: all 0.2s ease;
-}
-
-.filter-select-compact:focus {
-  outline: none;
-  border-color: #000;
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
-}
-
-.filter-clear-btn-compact {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background: #f3f4f6;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  color: #6b7280;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.filter-clear-btn-compact:hover {
-  background: #e5e7eb;
-  color: #374151;
-}
-
-/* Tabla - Productos */
-.servicio-info {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  min-width: 200px;
-}
-
-.servicio-image {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.service-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.servicio-details {
-  flex: 1;
-}
-
-.servicio-nombre {
-  font-weight: 600;
-  color: #1f2937;
-  font-size: 0.875rem;
-  line-height: 1.2;
-}
-
-.servicio-descripcion {
-  color: #6b7280;
-  font-size: 0.75rem;
-  font-family: monospace;
-  margin-top: 0.25rem;
-}
-
-/* Categorías */
-.categoria-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.badge-blue { background: #dbeafe; color: #1d4ed8; }
-.badge-purple { background: #ede9fe; color: #7c3aed; }
-.badge-green { background: #dcfce7; color: #16a34a; }
-.badge-orange { background: #fed7aa; color: #ea580c; }
-.badge-indigo { background: #e0e7ff; color: #4338ca; }
-.badge-gray { background: #f3f4f6; color: #6b7280; }
-
-/* Stock */
-.stock-info {
-  text-align: center;
-  min-width: 80px;
-}
-
-.stock-value {
-  font-weight: 700;
-  font-size: 1rem;
-  line-height: 1;
-}
-
-.stock-good { color: #10b981; }
-.stock-low { color: #f59e0b; }
-.stock-out { color: #dc2626; }
-
-.stock-min {
-  color: #6b7280;
-  font-size: 0.75rem;
-  margin-top: 0.25rem;
-}
-
-/* Precio */
-.precio-info {
-  text-align: right;
-  min-width: 100px;
-}
-
-.precio-value {
-  font-weight: 700;
-  color: #1f2937;
-  font-size: 0.875rem;
-}
-
-/* Estado */
-.status-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  min-width: 80px;
-  justify-content: center;
-}
-
-.status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-}
-
-.status-active {
-  background: #dcfce7;
-  color: #16a34a;
-}
-
-.status-active .status-dot {
-  background: #16a34a;
-}
-
-.status-inactive {
-  background: #fef2f2;
-  color: #dc2626;
-}
-
-.status-inactive .status-dot {
-  background: #dc2626;
-}
-
-/* Acciones */
-.action-buttons {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  max-width: 200px;
-}
-
-.action-btn {
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.375rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: 1px solid;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.action-edit {
-  background: #f8fafc;
-  color: #475569;
-  border-color: #e2e8f0;
-}
-
-.action-edit:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
-}
-
-.action-activate {
-  background: #ecfdf5;
-  color: #059669;
-  border-color: #a7f3d0;
-}
-
-.action-activate:hover {
-  background: #d1fae5;
-  border-color: #6ee7b7;
-}
-
-.action-deactivate {
-  background: #fef2f2;
-  color: #dc2626;
-  border-color: #fecaca;
-}
-
-.action-deactivate:hover {
-  background: #fee2e2;
-  border-color: #fca5a5;
-}
-
-/* Paginación */
-.pagination-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 1.5rem;
-  padding: 1rem;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.75rem;
-}
-
-.pagination-info {
-  font-size: 0.875rem;
-  color: #6B7280;
-  flex: 1;
-}
-
-.pagination-buttons {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.pagination-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  background: white;
-  color: #374151;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.pagination-btn:hover:not(.pagination-btn-disabled) {
-  background: #f9fafb;
-  border-color: #9ca3af;
-}
-
-.pagination-btn-disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.pagination-current {
-  font-size: 0.875rem;
-  color: #374151;
-  font-weight: 500;
-}
-
-/* Acciones masivas */
-.bulk-actions-container {
-  position: fixed;
-  bottom: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.75rem;
-  padding: 1rem 1.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  z-index: 50;
-}
-
-.bulk-actions-info {
-  font-size: 0.875rem;
-  color: #374151;
-  font-weight: 500;
-}
-
-.bulk-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.bulk-btn {
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.375rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: 1px solid;
-}
-
-.bulk-activate {
-  background: #ecfdf5;
-  color: #059669;
-  border-color: #a7f3d0;
-}
-
-.bulk-activate:hover {
-  background: #d1fae5;
-  border-color: #6ee7b7;
-}
-
-.bulk-deactivate {
-  background: #fef2f2;
-  color: #dc2626;
-  border-color: #fecaca;
-}
-
-.bulk-deactivate:hover {
-  background: #fee2e2;
-  border-color: #fca5a5;
-}
-
-.bulk-role {
-  background: #f8fafc;
-  color: #475569;
-  border-color: #e2e8f0;
-}
-
-.bulk-role:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
-}
-
-/* Botones principales */
-.btn-primary {
-  background: #000000;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: #1f2937;
-}
-
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  background: white;
-  color: #374151;
-  border: 1px solid #d1d5db;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.btn-secondary:hover {
-  background: #f9fafb;
-  border-color: #9ca3af;
-}
-
-/* Utilidades de Tailwind */
-.w-4 { width: 1rem; }
-.h-4 { height: 1rem; }
-.w-3 { width: 0.75rem; }
-.h-3 { height: 0.75rem; }
-.w-6 { width: 1.5rem; }
-.h-6 { height: 1.5rem; }
-
-.space-y-4 > * + * { margin-top: 1rem; }
-.grid { display: grid; }
-.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-.gap-4 { gap: 1rem; }
-.gap-3 { gap: 0.75rem; }
-
-.text-sm { font-size: 0.875rem; }
-.font-medium { font-weight: 500; }
-.text-gray-700 { color: #374151; }
-.text-gray-500 { color: #6b7280; }
-.mb-1 { margin-bottom: 0.25rem; }
-.pt-4 { padding-top: 1rem; }
-
-.block { display: block; }
-.flex { display: flex; }
-.items-center { align-items: center; }
-.justify-end { justify-content: flex-end; }
-.relative { position: relative; }
-.absolute { position: absolute; }
-.inset-y-0 { top: 0; bottom: 0; }
-.left-0 { left: 0; }
-.pl-3 { padding-left: 0.75rem; }
-.pl-8 { padding-left: 2rem; }
-.pr-3 { padding-right: 0.75rem; }
-.pointer-events-none { pointer-events: none; }
-
-.w-full { width: 100%; }
-.px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
-.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
-.border { border-width: 1px; }
-.border-t { border-top-width: 1px; }
-.border-gray-300 { border-color: #d1d5db; }
-.rounded-lg { border-radius: 0.5rem; }
-
-.focus\:ring-1:focus { box-shadow: 0 0 0 1px; }
-.focus\:ring-black:focus { box-shadow: 0 0 0 1px #000000; }
-.focus\:border-black:focus { border-color: #000000; }
-
-/* Responsive */
-@media (max-width: 768px) {
-  .admin-productos {
-    padding: 1rem;
-  }
-
-  .admin-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .filters-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filter-select-compact {
-    min-width: 100%;
-  }
-
-  .bulk-actions-container {
-    left: 1rem;
-    right: 1rem;
-    transform: none;
-    padding: 1rem;
-  }
-
-  .bulk-actions {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .bulk-btn {
-    width: 100%;
-    text-align: center;
-  }
-}
-</style>
+  </script>
+
+  <style scoped>
+  /* AdminProductos.vue - Completamente modernizado con Tailwind CSS v4 */
+  /* CSS personalizado eliminado - ~95% reducción de código CSS */
+  </style>

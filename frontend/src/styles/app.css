@@ -17,16 +17,16 @@
   --color-barber-primary: #000000;
   --color-barber-gray-400: #a1a1aa;
   --color-barber-gray-600: #52525b;
-  --color-barber-gold: #d97706;
-  --color-barber-gold-light: #f59e0b;
-  --color-barber-gold-dark: #92400e;
+  --color-barber-gold: #eab308;
+  --color-barber-gold-light: #facc15;
+  --color-barber-gold-dark: #a16207;
   
   /* Colores para panel administrativo */
   --color-admin-primary: #1f2937;
   --color-admin-secondary: #374151;
   --color-admin-accent: #3b82f6;
   --color-admin-success: #10b981;
-  --color-admin-warning: #f59e0b;
+  --color-admin-warning: #eab308;
   --color-admin-danger: #ef4444;
   --color-admin-info: #06b6d4;
   

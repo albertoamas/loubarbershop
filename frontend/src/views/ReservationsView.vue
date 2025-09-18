@@ -3,144 +3,262 @@
   Página de reservas con diseño tipo checkout
 -->
 <template>
-  <div class="min-h-screen bg-gray-100">
+  <div class="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100">
+    <!-- Header mejorado -->
+    <div class="bg-white shadow-sm border-b">
+      <div class="container mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-gradient-to-r from-gray-900 to-gray-700 rounded-xl flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-xl font-bold text-gray-900">Low Barber Shop</h1>
+              <p class="text-sm text-gray-500">Reserva tu cita perfecta</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="flex items-center space-x-1 text-sm text-gray-500">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>Horario: 9:00 AM - 6:00 PM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progreso de reserva -->
+    <div class="bg-white border-b">
+      <div class="container mx-auto px-6 py-4">
+        <div class="flex items-center justify-center space-x-8">
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm font-semibold">1</div>
+            <span class="text-sm font-medium text-gray-900">Seleccionar</span>
+          </div>
+          <div class="w-16 h-0.5 bg-gray-200"></div>
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center text-sm font-semibold">2</div>
+            <span class="text-sm text-gray-500">Confirmar</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="container mx-auto px-6 py-8">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Columna principal -->
-        <div class="lg:col-span-2">
-          <!-- Título -->
-          <h1 class="text-4xl font-bold text-gray-900 mb-8">Reserva tu cita</h1>
+        <div class="lg:col-span-2 space-y-8">
 
           <!-- Selección de barbero -->
-          <div class="mb-8">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Selecciona un barbero</h2>
-            <div class="relative">
-              <select
-                v-model="selectedBarber"
-                class="w-full px-4 py-4 bg-white border border-gray-200 rounded-xl text-gray-600 appearance-none focus:outline-none focus:ring-0 focus:border-gray-400 transition-colors"
-              >
-                <option :value="null">Selecciona un barbero</option>
-                <option 
-                  v-for="barber in barbers" 
-                  :key="barber.id" 
-                  :value="barber"
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-6 py-5 bg-gradient-to-r from-gray-50 to-white">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="text-xl font-bold text-gray-900">Selecciona un barbero</h2>
+                  <p class="text-sm text-gray-600">Elige el profesional que prefieras</p>
+                </div>
+              </div>
+            </div>
+            <div class="px-6 pb-6">
+              <div class="relative">
+                <select
+                  v-model="selectedBarber"
+                  class="w-full px-4 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl text-gray-700 font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 hover:border-gray-200"
                 >
-                  {{ barber.name }} - {{ barber.specialty }}
-                </option>
-              </select>
-              <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
+                  <option :value="null" class="text-gray-500">Selecciona un barbero</option>
+                  <option 
+                    v-for="barber in barbers" 
+                    :key="barber.id" 
+                    :value="barber"
+                    class="text-gray-700"
+                  >
+                    {{ barber.name }} - {{ barber.specialty }}
+                  </option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                  <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
+              <div v-if="selectedBarber" class="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                <div class="flex items-center space-x-3">
+                  <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center">
+                    <span class="text-white font-semibold text-sm">{{ selectedBarber.name.split(' ').map(n => n[0]).join('') }}</span>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-gray-900">{{ selectedBarber.name }}</h3>
+                    <p class="text-sm text-gray-600">{{ selectedBarber.specialty }}</p>
+                    <div class="flex items-center mt-1">
+                      <svg class="w-4 h-4 text-[var(--color-barber-gold)] mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                      </svg>
+                      <span class="text-sm text-gray-600">{{ selectedBarber.experience }}+ años de experiencia</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Selección de servicio -->
-          <div class="mb-8">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Selecciona un servicio</h2>
-            <div class="relative">
-              <select
-                v-model="selectedService"
-                class="w-full px-4 py-4 bg-white border border-gray-200 rounded-xl text-gray-600 appearance-none focus:outline-none focus:ring-0 focus:border-gray-400 transition-colors"
-              >
-                <option :value="null">Selecciona un servicio</option>
-                <option 
-                  v-for="service in services" 
-                  :key="service.id" 
-                  :value="service"
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-6 py-5 bg-gradient-to-r from-gray-50 to-white">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="text-xl font-bold text-gray-900">Selecciona un servicio</h2>
+                  <p class="text-sm text-gray-600">Elige el servicio que necesitas</p>
+                </div>
+              </div>
+            </div>
+            <div class="px-6 pb-6">
+              <div class="relative">
+                <select
+                  v-model="selectedService"
+                  class="w-full px-4 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl text-gray-700 font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 hover:border-gray-200"
                 >
-                  {{ service.name || 'Sin nombre' }} - {{ service.duration || 0 }}min - Bs {{ service.price || 0 }}
-                </option>
-              </select>
-              <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
+                  <option :value="null" class="text-gray-500">Selecciona un servicio</option>
+                  <option 
+                    v-for="service in services" 
+                    :key="service.id" 
+                    :value="service"
+                    class="text-gray-700"
+                  >
+                    {{ service.name || 'Sin nombre' }} - {{ service.duration || 0 }}min - Bs {{ service.price || 0 }}
+                  </option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                  <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
+              <div v-if="selectedService" class="mt-4 p-4 bg-green-50 rounded-xl border border-green-100">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h3 class="font-semibold text-gray-900">{{ selectedService.name }}</h3>
+                    <p class="text-sm text-gray-600">{{ selectedService.category }}</p>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-lg font-bold text-gray-900">Bs {{ selectedService.price }}</div>
+                    <div class="text-sm text-gray-600">{{ selectedService.duration }} minutos</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Selección de fecha y hora -->
-          <div class="mb-8">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Selecciona fecha y hora</h2>
-            
-            <!-- Calendario -->
-            <div class="bg-white rounded-xl p-6 mb-6">
-              <div class="flex items-center justify-between mb-6">
-                <button @click="previousMonth" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-6 py-5 bg-gradient-to-r from-gray-50 to-white">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                   </svg>
-                </button>
-                <h3 class="text-lg font-semibold text-gray-900">{{ currentMonth }}</h3>
-                <button @click="nextMonth" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                  </svg>
-                </button>
+                </div>
+                <div>
+                  <h2 class="text-xl font-bold text-gray-900">Selecciona fecha y hora</h2>
+                  <p class="text-sm text-gray-600">Elige el momento perfecto para tu cita</p>
+                </div>
               </div>
-              
-              <div class="grid grid-cols-7 gap-2 mb-4">
-                <div v-for="day in weekDays" :key="day" class="text-center text-sm font-medium text-gray-500 p-2">
-                  {{ day }}
+            </div>
+            <div class="px-6 pb-6">
+              <!-- Selector de hora -->
+              <div class="relative">
+                <select
+                  v-model="selectedTime"
+                  class="w-full px-4 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl text-gray-700 font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 hover:border-gray-200"
+                  :disabled="!selectedBarber || !selectedService || !selectedDate"
+                >
+                  <option value="">
+                    {{ !selectedBarber || !selectedService || !selectedDate 
+                       ? 'Selecciona barbero, servicio y fecha primero' 
+                       : 'Selecciona una hora' }}
+                  </option>
+                  <option v-for="time in availableTimes" :key="time" :value="time">
+                    {{ time }}
+                  </option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                  <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
+              <!-- Calendario -->
+              <div class="bg-gray-50 rounded-xl p-6 mb-6 border border-gray-100">
+                <div class="flex items-center justify-between mb-6">
+                  <button @click="previousMonth" class="p-2 hover:bg-white hover:shadow-sm rounded-xl transition-all duration-200">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                  </button>
+                  <h3 class="text-lg font-bold text-gray-900">{{ currentMonth }}</h3>
+                  <button @click="nextMonth" class="p-2 hover:bg-white hover:shadow-sm rounded-xl transition-all duration-200">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </button>
+                </div>
+                
+                <div class="grid grid-cols-7 gap-2 mb-4">
+                  <div v-for="day in weekDays" :key="day" class="text-center text-xs font-semibold text-gray-500 p-2 uppercase tracking-wide">
+                    {{ day }}
+                  </div>
+                </div>
+                
+                <div class="grid grid-cols-7 gap-2">
+                  <button
+                    v-for="date in currentMonthDates"
+                    :key="date"
+                    @click="selectDate(date)"
+                    :disabled="!date || isPastDate(date)"
+                    :class="[
+                      'p-3 text-center text-sm rounded-xl transition-all duration-200 font-medium',
+                      selectedDate === date 
+                        ? 'bg-gradient-to-r from-gray-900 to-gray-700 text-white shadow-lg transform scale-105' 
+                        : !date || isPastDate(date)
+                        ? 'text-gray-300 cursor-not-allowed'
+                        : 'text-gray-700 hover:bg-white hover:shadow-sm cursor-pointer',
+                      !date ? 'invisible' : ''
+                    ]"
+                  >
+                    {{ date }}
+                  </button>
                 </div>
               </div>
               
-              <div class="grid grid-cols-7 gap-2">
-                <button
-                  v-for="date in currentMonthDates"
-                  :key="date"
-                  @click="selectDate(date)"
-                  :disabled="!date || isPastDate(date)"
-                  :class="[
-                    'p-3 text-center text-sm rounded-lg transition-colors',
-                    selectedDate === date 
-                      ? 'bg-black text-white' 
-                      : !date || isPastDate(date)
-                      ? 'text-gray-300 cursor-not-allowed'
-                      : 'text-gray-700 hover:bg-gray-100 cursor-pointer',
-                    !date ? 'invisible' : ''
-                  ]"
-                >
-                  {{ date }}
-                </button>
-              </div>
-            </div>
-
-            <!-- Selector de hora -->
-            <div class="relative">
-              <select
-                v-model="selectedTime"
-                class="w-full px-4 py-4 bg-white border border-gray-200 rounded-xl text-gray-600 appearance-none focus:outline-none focus:ring-0 focus:border-gray-400 transition-colors"
-                :disabled="!selectedBarber || !selectedService || !selectedDate"
-              >
-                <option value="">
-                  {{ !selectedBarber || !selectedService || !selectedDate 
-                     ? 'Selecciona barbero, servicio y fecha primero' 
-                     : 'Selecciona una hora' }}
-                </option>
-                <option v-for="time in availableTimes" :key="time" :value="time">
-                  {{ time }}
-                </option>
-              </select>
-              <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-              </div>
-            </div>
-            
-            <!-- Información de disponibilidad -->
-            <div v-if="selectedBarber && selectedService && selectedDate" class="mt-3 text-sm text-gray-600">
-              <div class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <span>{{ availableTimes.length }} horarios disponibles para {{ selectedService.name }} ({{ selectedService.duration }}min)</span>
-              </div>
-              <div v-if="availableTimes.length === 0" class="mt-2 text-red-600">
-                ⚠️ No hay horarios disponibles para este día. Prueba otra fecha.
+              <!-- Información de disponibilidad -->
+              <div v-if="selectedBarber && selectedService && selectedDate" class="mt-4 p-4 bg-purple-50 rounded-xl border border-purple-100">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-gray-900">{{ availableTimes.length }} horarios disponibles</div>
+                    <div class="text-sm text-gray-600">Para {{ selectedService.name }} ({{ selectedService.duration }} minutos)</div>
+                    <div v-if="availableTimes.length === 0" class="mt-2 text-sm text-red-600 font-medium">
+                      ⚠️ No hay horarios disponibles para este día. Prueba otra fecha.
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -148,89 +266,132 @@
 
         <!-- Panel lateral de resumen -->
         <div class="lg:col-span-1">
-          <div class="bg-white rounded-xl p-6 sticky top-8">
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 sticky top-8 overflow-hidden">
             <!-- Loading state -->
-            <div v-if="loading" class="text-center py-8">
-              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-              <p class="text-gray-500 mt-2">Cargando...</p>
+            <div v-if="loading" class="text-center py-12">
+              <div class="animate-spin rounded-full h-10 w-10 border-2 border-gray-200 border-t-gray-900 mx-auto"></div>
+              <p class="text-gray-500 mt-4 font-medium">Cargando datos...</p>
             </div>
             
             <!-- Content -->
             <div v-else>
-              <!-- Información del barbero y servicio -->
-              <div class="flex items-center justify-between mb-6">
-                <div class="flex-1">
-                  <div class="text-sm text-gray-500">Barbero</div>
-                  <div class="text-lg font-semibold text-gray-900">
-                    {{ selectedBarber?.name || 'Selecciona un barbero' }}
-                  </div>
-                  <div class="text-sm text-gray-500">
-                    {{ selectedBarber?.specialty || '' }}
-                  </div>
-                  <div class="text-sm text-gray-500 mt-2">Servicio</div>
-                  <div class="text-base font-medium text-gray-900">
-                    {{ selectedService?.name || 'Selecciona un servicio' }}
-                  </div>
-                  <div class="text-sm text-gray-500">
-                    {{ selectedService?.category || '' }}
-                  </div>
-                </div>
-                <div class="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center ml-4">
-                  <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                  </svg>
-                </div>
+              <!-- Header del resumen -->
+              <div class="px-6 py-5 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
+                <h3 class="text-lg font-bold text-gray-900">Resumen de tu reserva</h3>
+                <p class="text-sm text-gray-600">Revisa los detalles antes de continuar</p>
               </div>
-
-              <!-- Información de la cita -->
-              <div class="space-y-4 mb-6">
-                <div class="flex justify-between">
-                  <span class="text-gray-500">Fecha</span>
-                  <span class="text-gray-900">{{ formatSelectedDate() }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-500">Hora</span>
-                  <span class="text-gray-900">{{ selectedTime || 'Selecciona una hora' }}</span>
-                </div>
-                <div class="flex justify-between" v-if="selectedService">
-                  <span class="text-gray-500">Duración</span>
-                  <span class="text-gray-900">{{ selectedService.duration }} min</span>
-                </div>
-              </div>
-
-              <!-- Resumen del pedido -->
-              <div class="border-t pt-4 mb-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Resumen del pedido</h3>
-                <div class="space-y-2">
-                  <div class="flex justify-between">
-                    <span class="text-gray-600">{{ selectedService?.name || 'Servicio' }}</span>
-                    <span class="text-gray-600">{{ selectedService?.duration || '30' }} min</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-gray-600">Subtotal</span>
-                    <span class="text-gray-900">Bs {{ selectedService?.price || 25 }}</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-gray-600">Impuestos (10%)</span>
-                    <span class="text-gray-900">Bs {{ calculateTax() }}</span>
-                  </div>
-                  <div class="border-t pt-2">
-                    <div class="flex justify-between font-semibold">
-                      <span class="text-gray-900">Total</span>
-                      <span class="text-gray-900">Bs {{ calculateTotal() }}</span>
+              
+              <div class="p-6">
+                <!-- Información del barbero y servicio -->
+                <div class="flex items-start justify-between mb-6">
+                  <div class="flex-1">
+                    <div class="space-y-4">
+                      <!-- Barbero -->
+                      <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center">
+                          <span class="text-white font-semibold text-sm">
+                            {{ selectedBarber ? selectedBarber.name.split(' ').map(n => n[0]).join('') : '?' }}
+                          </span>
+                        </div>
+                        <div>
+                          <div class="text-sm font-medium text-gray-500">Barbero</div>
+                          <div class="font-semibold text-gray-900">
+                            {{ selectedBarber?.name || 'Selecciona un barbero' }}
+                          </div>
+                          <div class="text-sm text-gray-500">
+                            {{ selectedBarber?.specialty || '' }}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <!-- Servicio -->
+                      <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+                          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                          </svg>
+                        </div>
+                        <div>
+                          <div class="text-sm font-medium text-gray-500">Servicio</div>
+                          <div class="font-semibold text-gray-900">
+                            {{ selectedService?.name || 'Selecciona un servicio' }}
+                          </div>
+                          <div class="text-sm text-gray-500">
+                            {{ selectedService?.category || '' }}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- Botón de reservar -->
-              <button
-                @click="makeReservation"
-                :disabled="!canReserve"
-                class="w-full bg-black text-white py-4 rounded-xl font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {{ canReserve ? 'Reservar Cita' : 'Complete todos los campos' }}
-              </button>
+                <!-- Información de la cita -->
+                <div class="space-y-3 mb-6 p-4 bg-gray-50 rounded-xl">
+                  <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                      <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                      </svg>
+                      <span class="text-gray-600 font-medium">Fecha</span>
+                    </div>
+                    <span class="text-gray-900 font-semibold">{{ formatSelectedDate() }}</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                      <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      <span class="text-gray-600 font-medium">Hora</span>
+                    </div>
+                    <span class="text-gray-900 font-semibold">{{ selectedTime || 'Selecciona una hora' }}</span>
+                  </div>
+                  <div class="flex justify-between items-center" v-if="selectedService">
+                    <div class="flex items-center space-x-2">
+                      <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                      </svg>
+                      <span class="text-gray-600 font-medium">Duración</span>
+                    </div>
+                    <span class="text-gray-900 font-semibold">{{ selectedService.duration }} min</span>
+                  </div>
+                </div>
+
+                <!-- Resumen del pedido -->
+                <div class="border-t border-gray-100 pt-6">
+                  <h4 class="text-base font-bold text-gray-900 mb-4">Detalles del precio</h4>
+                  <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                      <span class="text-gray-600">{{ selectedService?.name || 'Servicio' }}</span>
+                      <span class="text-gray-900 font-medium">{{ selectedService?.duration || '30' }} min</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                      <span class="text-gray-600">Precio del servicio</span>
+                      <span class="text-gray-900 font-medium">Bs {{ selectedService?.price || 25 }}</span>
+                    </div>
+                    <div class="border-t border-gray-200 pt-3">
+                      <div class="flex justify-between items-center">
+                        <span class="text-lg font-bold text-gray-900">Total</span>
+                        <span class="text-xl font-bold text-gray-900">Bs {{ calculateTotal() }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Botón de continuar -->
+                <button
+                  @click="proceedToConfirmation"
+                  :disabled="!canReserve"
+                  class="w-full mt-6 bg-gradient-to-r from-gray-900 to-gray-700 text-white py-4 rounded-xl font-semibold text-lg hover:from-gray-800 hover:to-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] shadow-lg"
+                >
+                  {{ canReserve ? 'Continuar a confirmación' : 'Complete todos los campos' }}
+                </button>
+                
+                <div class="mt-4 text-center">
+                  <p class="text-xs text-gray-500">
+                    Al continuar, podrás revisar y confirmar tu reserva
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -549,17 +710,51 @@ export default {
       ];
       return `${this.selectedDate} de ${months[this.currentMonthIndex]} de ${this.currentYear}`;
     },
-    calculateTax() {
-      if (!this.selectedService) return '0.00';
-      const tax = (this.selectedService.price * 0.10).toFixed(2);
-      return tax;
-    },
     calculateTotal() {
       if (!this.selectedService) return '0.00';
-      const subtotal = this.selectedService.price;
-      const tax = parseFloat(this.calculateTax());
-      return (subtotal + tax).toFixed(2);
+      return this.selectedService.price.toFixed(2);
     },
+    
+    proceedToConfirmation() {
+      console.log('🔄 proceedToConfirmation llamado');
+      console.log('canReserve:', this.canReserve);
+      console.log('selectedBarber:', this.selectedBarber);
+      console.log('selectedService:', this.selectedService);
+      console.log('selectedDate:', this.selectedDate);
+      console.log('selectedTime:', this.selectedTime);
+      
+      if (!this.canReserve) {
+        alert('Por favor complete todos los campos requeridos');
+        return;
+      }
+      
+      try {
+        // Preparar datos de la reserva para pasar a la siguiente página
+        const reservationData = {
+          barber: this.selectedBarber,
+          service: this.selectedService,
+          date: this.formatDateForComparison(this.selectedDate),
+          time: this.selectedTime,
+          dateFormatted: this.formatSelectedDate(),
+          subtotal: this.selectedService.price,
+          total: parseFloat(this.calculateTotal())
+        };
+        
+        console.log('🚀 Navegando a confirmación con datos:', reservationData);
+        
+        // Guardar datos en sessionStorage para pasar entre páginas
+        sessionStorage.setItem('reservationData', JSON.stringify(reservationData));
+        
+        // Navegar a la página de confirmación
+        this.$router.push('/reservas/confirmacion');
+        
+      } catch (error) {
+        console.error('❌ Error en proceedToConfirmation:', error);
+        alert('Error al procesar la reserva. Inténtalo de nuevo.');
+      }
+    },
+    
+    // Método legacy mantenido por compatibilidad
     async makeReservation() {
       if (!this.canReserve) {
         alert('Por favor complete todos los campos requeridos');
@@ -608,7 +803,7 @@ export default {
           time: this.selectedTime,
           duration: this.selectedService.duration,
           subtotal: this.selectedService.price,
-          tax: this.calculateTax(),
+          total: this.calculateTotal(),
           total: this.calculateTotal(),
           id: response.id || response.data?.id // ID de la reserva del backend
         };
@@ -623,9 +818,7 @@ export default {
 ✂️ Servicio: ${reservation.service}
 ⏰ Duración: ${reservation.duration} minutos
 
-💰 Subtotal: Bs ${reservation.subtotal}
-📊 Impuestos: Bs ${reservation.tax}
-💵 Total: Bs ${reservation.total}
+💰 Total: Bs ${reservation.total}
 
 🆔 ID de reserva: ${reservation.id}
 ¡Nos vemos pronto en Low Barber!`);

@@ -34,8 +34,8 @@ class Reservation(BaseModel):
     hora_inicio = db.Column(db.Time, nullable=False)
     hora_fin = db.Column(db.Time, nullable=True)
     
-    # Estado de la reserva
-    estado = db.Column(db.Enum(ReservationStatus), default=ReservationStatus.PENDIENTE, nullable=False)
+    # Estado de la reserva - Usando String para que SQLAlchemy use el valor del enum
+    estado = db.Column(db.String(20), default=ReservationStatus.PENDIENTE.value, nullable=False)
     
     # Información adicional
     notas = db.Column(db.Text, nullable=True)
@@ -73,7 +73,7 @@ class Reservation(BaseModel):
             'fecha_reserva': self.fecha_reserva.isoformat() if self.fecha_reserva else None,
             'hora_inicio': self.hora_inicio.strftime('%H:%M') if self.hora_inicio else None,
             'hora_fin': self.hora_fin.strftime('%H:%M') if self.hora_fin else None,
-            'estado': self.estado.value if self.estado else None,
+            'estado': self.estado,  # estado ya es un string
             'notas': self.notas,
             'precio_final': float(self.precio_final) if self.precio_final else None,
             'cliente_nombre': self.cliente_nombre,
@@ -87,13 +87,13 @@ class Reservation(BaseModel):
     
     def confirmar(self):
         """Confirma la reserva"""
-        self.estado = ReservationStatus.CONFIRMADA
+        self.estado = ReservationStatus.CONFIRMADA.value
         self.fecha_confirmacion = datetime.utcnow()
         self.save()
     
     def completar(self, precio_final=None):
         """Completa la reserva"""
-        self.estado = ReservationStatus.COMPLETADA
+        self.estado = ReservationStatus.COMPLETADA.value
         self.fecha_completacion = datetime.utcnow()
         if precio_final:
             self.precio_final = precio_final
@@ -101,7 +101,7 @@ class Reservation(BaseModel):
     
     def cancelar(self):
         """Cancela la reserva"""
-        self.estado = ReservationStatus.CANCELADA
+        self.estado = ReservationStatus.CANCELADA.value
         self.fecha_cancelacion = datetime.utcnow()
         self.save()
     
@@ -131,9 +131,9 @@ class Reservation(BaseModel):
             fecha_reserva=fecha
         ).filter(
             cls.estado.in_([
-                ReservationStatus.PENDIENTE, 
-                ReservationStatus.CONFIRMADA, 
-                ReservationStatus.EN_PROCESO
+                ReservationStatus.PENDIENTE.value, 
+                ReservationStatus.CONFIRMADA.value, 
+                ReservationStatus.EN_PROCESO.value
             ])
         ).order_by(cls.hora_inicio).all()
     
@@ -234,11 +234,11 @@ class Reservation(BaseModel):
             return False, "No tienes permisos para cancelar esta reserva"
         
         # No se puede cancelar si ya está completada
-        if self.estado == ReservationStatus.COMPLETADA:
+        if self.estado == ReservationStatus.COMPLETADA.value:
             return False, "No se puede cancelar una reserva completada"
         
         # No se puede cancelar si ya está cancelada
-        if self.estado == ReservationStatus.CANCELADA:
+        if self.estado == ReservationStatus.CANCELADA.value:
             return False, "La reserva ya está cancelada"
         
         # Verificar tiempo mínimo (2 horas antes para clientes, barberos pueden cancelar hasta 30 min antes)
@@ -269,8 +269,8 @@ class Reservation(BaseModel):
                 return False, "Solo puedes confirmar tus propias reservas"
         
         # Solo se pueden confirmar reservas pendientes
-        if self.estado != ReservationStatus.PENDIENTE:
-            return False, f"No se puede confirmar una reserva en estado: {self.estado.value}"
+        if self.estado != ReservationStatus.PENDIENTE.value:
+            return False, f"No se puede confirmar una reserva en estado: {self.estado}"
         
         return True, "Reserva puede ser confirmada"
     

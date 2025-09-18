@@ -48,6 +48,16 @@
           >
             Reservar
           </RouterLink>
+          
+          <!-- Enlace Mis Reservas (solo si está autenticado) -->
+          <RouterLink 
+            v-if="isAuthenticated"
+            to="/mis-reservas"
+            class="text-white hover:text-gray-300 transition-colors font-medium text-sm tracking-wide"
+            :class="{ 'text-gray-300 font-semibold': $route.path === '/mis-reservas' }"
+          >
+            Mis Reservas
+          </RouterLink>
         </div>
 
         <!-- Botones de acción -->
@@ -129,7 +139,7 @@
             </RouterLink>
             <RouterLink
               to="/register"
-              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors font-medium text-sm tracking-wide"
+              class="bg-[var(--color-barber-gold)] hover:bg-yellow-500 text-[var(--color-barber-primary)] hover:text-white px-4 py-2 rounded-md transition-all duration-300 font-medium text-sm tracking-wide shadow-md hover:shadow-lg transform hover:scale-105"
             >
               Registrarse
             </RouterLink>
@@ -186,6 +196,17 @@
             :class="{ 'text-gray-300 font-semibold': $route.path === '/reservas' }"
           >
             Reservar
+          </RouterLink>
+          
+          <!-- Enlace Mis Reservas móvil (solo si está autenticado) -->
+          <RouterLink 
+            v-if="isAuthenticated"
+            to="/mis-reservas"
+            @click="closeMobileMenu"
+            class="text-white hover:text-gray-300 transition-colors font-medium py-2 text-sm tracking-wide"
+            :class="{ 'text-gray-300 font-semibold': $route.path === '/mis-reservas' }"
+          >
+            Mis Reservas
           </RouterLink>
           
           <div class="flex flex-col space-y-2 pt-4 border-t border-gray-700">
@@ -245,7 +266,7 @@
               <RouterLink
                 to="/register"
                 @click="closeMobileMenu"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors font-medium text-sm tracking-wide"
+                class="bg-[var(--color-barber-gold)] hover:bg-yellow-500 text-[var(--color-barber-primary)] hover:text-white px-4 py-2 rounded-md transition-all duration-300 font-medium text-sm tracking-wide shadow-md hover:shadow-lg transform hover:scale-105"
               >
                 Registrarse
               </RouterLink>

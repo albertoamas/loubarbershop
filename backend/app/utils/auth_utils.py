@@ -71,8 +71,13 @@ def get_current_user():
     """Obtiene el usuario actual desde el token JWT"""
     try:
         current_user_id = get_jwt_identity()
-        return User.find_by_id(current_user_id)
-    except:
+        
+        if not current_user_id:
+            return None
+            
+        user = User.find_by_id(current_user_id)
+        return user
+    except Exception as e:
         return None
 
 def check_user_permission(user_id, required_role=None):

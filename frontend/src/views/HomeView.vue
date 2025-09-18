@@ -6,17 +6,17 @@
 <template>
   <div class="min-h-screen bg-gray-100">
     <!-- Panel de Pruebas de Desarrollo (temporal) -->
-    <div v-if="showDevPanel" class="bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-4">
+    <div v-if="showDevPanel" class="bg-[color-mix(in_srgb,var(--color-barber-gold),white_80%)] border-l-4 border-[var(--color-barber-gold)] p-4 mb-4">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between">
           <div class="flex">
             <div class="flex-shrink-0">
-              <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <svg class="h-5 w-5 text-[var(--color-barber-gold)]" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
               </svg>
             </div>
             <div class="ml-3">
-              <p class="text-sm text-yellow-700">
+              <p class="text-sm text-[color-mix(in_srgb,var(--color-barber-gold),black_20%)]">
                 <strong>Panel de Desarrollo:</strong> Haz clic en los botones para probar el panel administrativo
               </p>
             </div>
@@ -48,7 +48,7 @@
             </button>
             <button
               @click="showDevPanel = false"
-              class="text-yellow-700 hover:text-yellow-900 text-sm"
+              class="text-[color-mix(in_srgb,var(--color-barber-gold),black_20%)] hover:text-[var(--color-barber-gold)] text-sm"
             >
               ✕
             </button>
@@ -65,7 +65,7 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Encabezado -->
         <div class="text-center mb-12">
-          <div class="inline-flex items-center justify-center px-4 py-2 bg-black text-white rounded-full text-sm font-medium mb-4">
+          <div class="inline-flex items-center justify-center px-4 py-2 bg-[var(--color-barber-primary)] text-white rounded-full text-sm font-medium mb-4">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
@@ -74,7 +74,7 @@
           <h2 class="text-4xl font-bold text-black mb-4">
             Servicios Profesionales
           </h2>
-          <div class="w-16 h-0.5 bg-black mx-auto mb-4"></div>
+          <div class="w-16 h-0.5 bg-[var(--color-barber-primary)] mx-auto mb-4"></div>
           <p class="text-lg text-gray-600">
             Transformamos tu imagen con los mejores servicios
           </p>
@@ -90,7 +90,7 @@
         </div>
 
         <div class="text-center">
-          <RouterLink to="/servicios" class="bg-black text-white px-6 py-3 rounded-xl font-medium hover:bg-gray-800 transition-all duration-200 inline-block">
+          <RouterLink to="/servicios" class="bg-[var(--color-barber-primary)] text-white px-6 py-3 rounded-xl font-medium hover:bg-[var(--color-barber-gold)] transition-all duration-200 inline-block">
             Ver Todos los Servicios
           </RouterLink>
         </div>
@@ -101,7 +101,7 @@
     <section class="py-16 bg-gray-100">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
-          <div class="inline-flex items-center justify-center px-4 py-2 bg-black text-white rounded-full text-sm font-medium mb-4">
+          <div class="inline-flex items-center justify-center px-4 py-2 bg-[var(--color-barber-primary)] text-white rounded-full text-sm font-medium mb-4">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M9 1L5 3l4 2 4-2-4-2z"/>
             </svg>
@@ -110,13 +110,13 @@
           <h2 class="text-4xl font-bold text-black mb-4">
             Productos Recomendados
           </h2>
-          <div class="w-16 h-0.5 bg-black mx-auto mb-4"></div>
+          <div class="w-16 h-0.5 bg-[var(--color-barber-primary)] mx-auto mb-4"></div>
           <p class="text-lg text-gray-600 max-w-2xl mx-auto">
             Los mejores productos para el cuidado personal, seleccionados por nuestros expertos
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 mb-12">
           <ProductCard 
             v-for="product in featuredProducts" 
             :key="product.id"
@@ -126,7 +126,7 @@
         </div>
 
         <div class="text-center">
-          <RouterLink to="/productos" class="bg-black text-white px-6 py-3 rounded-xl font-medium hover:bg-gray-800 transition-all duration-200 inline-block">
+          <RouterLink to="/productos" class="bg-[var(--color-barber-primary)] text-white px-6 py-3 rounded-xl font-medium hover:bg-[var(--color-barber-gold)] transition-all duration-200 inline-block">
             Ver Todos los Productos
           </RouterLink>
         </div>
@@ -167,7 +167,7 @@
             
             <div class="space-y-4 mb-8">
               <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 bg-black rounded-lg flex items-center justify-center">
+                <div class="w-12 h-12 bg-[var(--color-barber-primary)] rounded-lg flex items-center justify-center">
                   <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -180,7 +180,7 @@
               </div>
               
               <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 bg-black rounded-lg flex items-center justify-center">
+                <div class="w-12 h-12 bg-[var(--color-barber-primary)] rounded-lg flex items-center justify-center">
                   <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                   </svg>
@@ -192,7 +192,7 @@
               </div>
               
               <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 bg-black rounded-lg flex items-center justify-center">
+                <div class="w-12 h-12 bg-[var(--color-barber-primary)] rounded-lg flex items-center justify-center">
                   <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                   </svg>
@@ -205,7 +205,7 @@
             </div>
             
             <div class="flex flex-col sm:flex-row gap-4">
-              <RouterLink to="/contacto" class="bg-black text-white px-6 py-3 rounded-xl font-medium hover:bg-gray-800 transition-all duration-200 inline-block text-center">
+              <RouterLink to="/contacto" class="bg-[var(--color-barber-primary)] text-white px-6 py-3 rounded-xl font-medium hover:bg-[var(--color-barber-gold)] transition-all duration-200 inline-block text-center">
                 Contactar
               </RouterLink>
               <RouterLink to="/reservas" class="bg-gray-200 text-black px-6 py-3 rounded-xl font-medium hover:bg-gray-300 transition-all duration-200 inline-block text-center">
@@ -299,18 +299,6 @@ export default {
           tags: ['Fijación', 'Brillo']
         },
         {
-          id: 2,
-          name: 'Shampoo Anticaspa',
-          description: 'Shampoo especializado para combatir la caspa con ingredientes naturales.',
-          price: 28.00,
-          brand: 'Natural Care',
-          category: 'Cuidado',
-          stock: 8,
-          rating: 4.2,
-          isNew: true,
-          tags: ['Anticaspa', 'Natural']
-        },
-        {
           id: 3,
           name: 'Aceite para Barba',
           description: 'Aceite nutritivo para barba que suaviza y da brillo natural.',
@@ -320,17 +308,6 @@ export default {
           stock: 12,
           rating: 4.8,
           tags: ['Barba', 'Nutritivo']
-        },
-        {
-          id: 4,
-          name: 'Cera Modeladora',
-          description: 'Cera de textura flexible para modelar y dar forma a cualquier estilo.',
-          price: 32.00,
-          brand: 'Style Pro',
-          category: 'Styling',
-          stock: 0,
-          rating: 4.3,
-          tags: ['Modelado', 'Flexible']
         }
       ]
     }

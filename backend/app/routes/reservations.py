@@ -53,7 +53,8 @@ def get_reservations():
         if estado:
             try:
                 estado_enum = ReservationStatus(estado)
-                query = query.filter_by(estado=estado_enum)
+                # Ahora filtramos por el valor del enum (string)
+                query = query.filter_by(estado=estado_enum.value)
             except ValueError:
                 return jsonify({'error': 'Estado de reserva inválido'}), 400
         
@@ -99,15 +100,17 @@ def create_reservation():
     """Crear una nueva reserva"""
     try:
         current_user = get_current_user()
-        print(f"🔍 DEBUG: Usuario actual: {current_user.email} (ID: {current_user.id})")
-        print(f"🔍 DEBUG: Datos recibidos: {request.json}")
+        
+        if not current_user:
+            return jsonify({
+                'error': 'Usuario no autenticado',
+                'message': 'No se pudo obtener la información del usuario actual'
+            }), 401
         
         # Validar datos de entrada
         try:
             data = reservation_create_schema.load(request.json)
-            print(f"🔍 DEBUG: Datos validados: {data}")
         except ValidationError as e:
-            print(f"❌ DEBUG: Error de validación: {e.messages}")
             return jsonify({
                 'error': 'Error de validación',
                 'message': 'Los datos enviados no son válidos',
@@ -116,7 +119,6 @@ def create_reservation():
         
         # Verificar que el barbero exista y esté disponible
         barbero = Barber.query.get(data['barbero_id'])
-        print(f"🔍 DEBUG: Barbero encontrado: {barbero.nombre if barbero else 'None'}")
         if barbero:
             print(f"🔍 DEBUG: Barbero - Disponible: {barbero.disponible}, Activo: {barbero.activo}")
         
@@ -128,9 +130,6 @@ def create_reservation():
         
         # Verificar que el servicio exista y esté activo
         servicio = Service.query.get(data['servicio_id'])
-        print(f"🔍 DEBUG: Servicio encontrado: {servicio.nombre if servicio else 'None'}")
-        if servicio:
-            print(f"🔍 DEBUG: Servicio - Activo: {servicio.activo}")
         
         if not servicio:
             return jsonify({'error': 'Servicio no encontrado'}), 404
@@ -150,11 +149,14 @@ def create_reservation():
             service_id=data['servicio_id'],
             fecha_reserva=data['fecha_reserva'],
             hora_inicio=data['hora_inicio'],
-            cliente_nombre=current_user.nombre,
-            cliente_email=current_user.email,
-            cliente_telefono=current_user.telefono,
+            cliente_nombre=data.get('cliente_nombre', current_user.nombre),
+            cliente_email=data.get('cliente_email', current_user.email),
+            cliente_telefono=data.get('cliente_telefono', current_user.telefono),
             notas=data.get('notas')
         )
+        
+        # Establecer estado usando el valor del enum (string)
+        reserva.estado = ReservationStatus.PENDIENTE.value
         
         # Establecer hora de fin y precio
         reserva.hora_fin = hora_fin
@@ -226,7 +228,7 @@ def update_reservation(reservation_id):
             return jsonify({'error': 'No tienes permisos para actualizar esta reserva'}), 403
         
         # Solo se pueden actualizar reservas pendientes
-        if reserva.estado != ReservationStatus.PENDIENTE:
+        if reserva.estado != ReservationStatus.PENDIENTE.value:
             return jsonify({'error': 'Solo se pueden actualizar reservas pendientes'}), 400
         
         # Validar datos
@@ -363,7 +365,7 @@ def complete_reservation(reservation_id):
             return jsonify({'error': 'No tienes permisos para completar reservas'}), 403
         
         # Solo se pueden completar reservas confirmadas o en proceso
-        if reserva.estado not in [ReservationStatus.CONFIRMADA, ReservationStatus.EN_PROCESO]:
+        if reserva.estado not in [ReservationStatus.CONFIRMADA.value, ReservationStatus.EN_PROCESO.value]:
             return jsonify({'error': 'Solo se pueden completar reservas confirmadas o en proceso'}), 400
         
         # Obtener precio final si se envía

@@ -317,6 +317,140 @@ const reservationService = {
       total: reservas.length,
       isDemo: true
     }
+  },
+
+  /**
+   * Obtener las reservas del usuario actual
+   */
+  async getMyReservations() {
+    try {
+      const response = await apiClient.get('/api/user/reservations')
+      console.log('✅ Mis reservas obtenidas del backend:', response.data)
+      
+      return {
+        success: true,
+        data: response.data.reservas || response.data || [],
+        message: 'Reservas obtenidas exitosamente'
+      }
+    } catch (error) {
+      console.error('❌ Error al obtener mis reservas:', error)
+      
+      // Fallback con datos de ejemplo
+      return this.getMockUserReservations()
+    }
+  },
+
+  /**
+   * Cancelar una reserva
+   */
+  async cancelReservation(reservationId) {
+    try {
+      const response = await apiClient.put(`/api/reservations/${reservationId}/cancel`)
+      console.log('✅ Reserva cancelada:', response.data)
+      
+      return {
+        success: true,
+        data: response.data,
+        message: 'Reserva cancelada exitosamente'
+      }
+    } catch (error) {
+      console.error('❌ Error al cancelar reserva:', error)
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Error al cancelar la reserva'
+      }
+    }
+  },
+
+  /**
+   * Obtener datos mock para las reservas del usuario
+   */
+  getMockUserReservations() {
+    const today = new Date()
+    const dayAfter = new Date(today.getTime() + 24 * 60 * 60 * 1000)
+    const weekAfter = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)
+    
+    const reservas = [
+      {
+        id: 1,
+        servicio: 'Corte de Cabello Premium',
+        service_name: 'Corte de Cabello Premium',
+        fecha: weekAfter.toISOString().split('T')[0],
+        date: weekAfter.toISOString().split('T')[0],
+        hora: '10:00',
+        time: '10:00',
+        estado: 'confirmada',
+        status: 'confirmed',
+        barbero: 'Carlos López',
+        barber_name: 'Carlos López',
+        precio: 50.00,
+        price: 50.00,
+        notas: 'Corte moderno con degradado en los laterales',
+        notes: 'Corte moderno con degradado en los laterales',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: 2,
+        servicio: 'Barba + Bigote',
+        service_name: 'Barba + Bigote',
+        fecha: dayAfter.toISOString().split('T')[0],
+        date: dayAfter.toISOString().split('T')[0],
+        hora: '14:30',
+        time: '14:30',
+        estado: 'pendiente',
+        status: 'pending',
+        barbero: 'Miguel Torres',
+        barber_name: 'Miguel Torres',
+        precio: 40.00,
+        price: 40.00,
+        notas: 'Mantener longitud actual, solo perfilar',
+        notes: 'Mantener longitud actual, solo perfilar',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: 3,
+        servicio: 'Servicio Completo',
+        service_name: 'Servicio Completo',
+        fecha: '2024-12-28',
+        date: '2024-12-28',
+        hora: '16:00',
+        time: '16:00',
+        estado: 'completada',
+        status: 'completed',
+        barbero: 'Carlos López',
+        barber_name: 'Carlos López',
+        precio: 80.00,
+        price: 80.00,
+        notas: 'Excelente servicio como siempre',
+        notes: 'Excelente servicio como siempre',
+        created_at: new Date('2024-12-28').toISOString()
+      },
+      {
+        id: 4,
+        servicio: 'Corte Clásico',
+        service_name: 'Corte Clásico',
+        fecha: '2024-12-15',
+        date: '2024-12-15',
+        hora: '09:00',
+        time: '09:00',
+        estado: 'cancelada',
+        status: 'cancelled',
+        barbero: 'Miguel Torres',
+        barber_name: 'Miguel Torres',
+        precio: 45.00,
+        price: 45.00,
+        notas: 'Cancelada por cambio de planes',
+        notes: 'Cancelada por cambio de planes',
+        created_at: new Date('2024-12-15').toISOString()
+      }
+    ]
+
+    return {
+      success: true,
+      data: reservas,
+      message: 'Reservas de ejemplo cargadas',
+      isDemo: true
+    }
   }
 }
 

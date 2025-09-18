@@ -348,6 +348,192 @@ class ProductService {
   // ==========================================
 
   /**
+   * Método alternativo para obtener todos los productos (compatibilidad con AdminProductos)
+   */
+  async getAll() {
+    try {
+      const response = await apiClient.get('/api/products')
+      const products = response.data.products || response.data || []
+      
+      // Transformar los productos al formato esperado por AdminProductos
+      const transformedProducts = products.map(product => ({
+        id: product.id,
+        nombre: product.nombre || product.name,
+        codigo: product.codigo || product.code || `PROD-${product.id}`,
+        marca: product.marca || product.brand || 'Sin marca',
+        descripcion: product.descripcion || product.description || '',
+        categoria: product.categoria || product.category || 'General',
+        precioCosto: product.precioCosto || product.precio_costo || product.cost_price || 0,
+        precioVenta: product.precioVenta || product.precio || product.price || 0,
+        stockActual: product.stockActual || product.stock || 0,
+        stockMinimo: product.stockMinimo || product.stock_minimo || product.min_stock || 5,
+        estado: product.estado || product.status || (product.activo ? 'activo' : 'inactivo'),
+        imagen: product.imagen || product.image || null,
+        createdAt: product.createdAt || product.created_at || new Date().toISOString(),
+        updatedAt: product.updatedAt || product.updated_at || new Date().toISOString()
+      }))
+      
+      return {
+        data: transformedProducts,
+        total: transformedProducts.length,
+        isDemo: false
+      }
+    } catch (error) {
+      console.error('❌ Error al obtener productos:', error)
+      // Retornar datos de fallback
+      const fallbackProducts = this.getFallbackProductsRealFormat()
+      return {
+        data: fallbackProducts,
+        total: fallbackProducts.length,
+        isDemo: true
+      }
+    }
+  }
+
+  /**
+   * Crear un nuevo producto
+   */
+  async create(productData) {
+    try {
+      const response = await apiClient.post('/api/admin/products', productData)
+      return response.data
+    } catch (error) {
+      console.error('Error creating product:', error)
+      throw new Error(error.response?.data?.message || 'Error al crear producto')
+    }
+  }
+
+  /**
+   * Actualizar un producto existente
+   */
+  async update(id, productData) {
+    try {
+      const response = await apiClient.put(`/api/admin/products/${id}`, productData)
+      return response.data
+    } catch (error) {
+      console.error('Error updating product:', error)
+      throw new Error(error.response?.data?.message || 'Error al actualizar producto')
+    }
+  }
+
+  /**
+   * Actualizar estado de un producto
+   */
+  async updateStatus(id, status) {
+    try {
+      const response = await apiClient.patch(`/api/admin/products/${id}/status`, { estado: status })
+      return response.data
+    } catch (error) {
+      console.error('Error updating product status:', error)
+      throw new Error(error.response?.data?.message || 'Error al actualizar estado del producto')
+    }
+  }
+
+  /**
+   * Productos de fallback en formato compatible con AdminProductos
+   */
+  getFallbackProductsRealFormat() {
+    return [
+      {
+        id: 1,
+        nombre: 'Shampoo Premium',
+        codigo: 'SHAM-001',
+        marca: "L'Oréal",
+        descripcion: 'Shampoo premium para todo tipo de cabello',
+        categoria: 'Cuidado Capilar',
+        precioCosto: 25.50,
+        precioVenta: 45.00,
+        stockActual: 15,
+        stockMinimo: 5,
+        estado: 'activo',
+        imagen: null,
+        createdAt: '2024-01-15T10:00:00Z',
+        updatedAt: '2024-01-20T15:30:00Z'
+      },
+      {
+        id: 2,
+        nombre: 'Gel Fijador Extra Fuerte',
+        codigo: 'GEL-002',
+        marca: 'American Crew',
+        descripcion: 'Gel de fijación extra fuerte para peinados duraderos',
+        categoria: 'Styling',
+        precioCosto: 18.00,
+        precioVenta: 32.00,
+        stockActual: 8,
+        stockMinimo: 10,
+        estado: 'activo',
+        imagen: null,
+        createdAt: '2024-01-16T11:15:00Z',
+        updatedAt: '2024-01-21T09:45:00Z'
+      },
+      {
+        id: 3,
+        nombre: 'Crema Facial Hidratante',
+        codigo: 'CREM-003',
+        marca: 'Nivea',
+        descripcion: 'Crema hidratante para el cuidado facial diario',
+        categoria: 'Cuidado Facial',
+        precioCosto: 22.75,
+        precioVenta: 38.50,
+        stockActual: 0,
+        stockMinimo: 8,
+        estado: 'activo',
+        imagen: null,
+        createdAt: '2024-01-17T14:20:00Z',
+        updatedAt: '2024-01-22T16:00:00Z'
+      },
+      {
+        id: 4,
+        nombre: 'Máquina Cortapelos Profesional',
+        codigo: 'MAQ-004',
+        marca: 'Wahl',
+        descripcion: 'Máquina cortapelos profesional con múltiples accesorios',
+        categoria: 'Herramientas',
+        precioCosto: 180.00,
+        precioVenta: 280.00,
+        stockActual: 3,
+        stockMinimo: 2,
+        estado: 'activo',
+        imagen: null,
+        createdAt: '2024-01-18T09:30:00Z',
+        updatedAt: '2024-01-23T12:15:00Z'
+      },
+      {
+        id: 5,
+        nombre: 'Toalla Premium',
+        codigo: 'TOA-005',
+        marca: 'Genérica',
+        descripcion: 'Toalla de alta calidad para barbería',
+        categoria: 'Accesorios',
+        precioCosto: 12.00,
+        precioVenta: 22.00,
+        stockActual: 25,
+        stockMinimo: 15,
+        estado: 'inactivo',
+        imagen: null,
+        createdAt: '2024-01-19T13:45:00Z',
+        updatedAt: '2024-01-24T10:30:00Z'
+      },
+      {
+        id: 6,
+        nombre: 'Acondicionador Reparador',
+        codigo: 'ACON-006',
+        marca: 'Schwarzkopf',
+        descripcion: 'Acondicionador para cabello seco y dañado',
+        categoria: 'Cuidado Capilar',
+        precioCosto: 20.25,
+        precioVenta: 35.75,
+        stockActual: 12,
+        stockMinimo: 8,
+        estado: 'activo',
+        imagen: null,
+        createdAt: '2024-01-20T14:00:00Z',
+        updatedAt: '2024-01-25T19:00:00Z'
+      }
+    ]
+  }
+
+  /**
    * Datos de fallback para productos (desarrollo)
    */
   getFallbackProducts() {

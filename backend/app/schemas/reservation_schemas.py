@@ -14,6 +14,11 @@ class ReservationCreateSchema(Schema):
     hora_inicio = fields.Time(required=True)
     notas = fields.Str(required=False, validate=validate.Length(max=500))
     
+    # Campos de información del cliente (opcionales - si no se envían, se usan los del usuario autenticado)
+    cliente_nombre = fields.Str(required=False, validate=validate.Length(min=2, max=100))
+    cliente_telefono = fields.Str(required=False, validate=validate.Length(max=20))
+    cliente_email = fields.Email(required=False, validate=validate.Length(max=120))
+    
     @validates('fecha_reserva')
     def validate_fecha_reserva(self, value):
         """Valida que la fecha no sea en el pasado"""
@@ -90,7 +95,7 @@ class ReservationUpdateSchema(Schema):
 
 class ReservationStatusUpdateSchema(Schema):
     """Schema para actualizar el estado de una reserva"""
-    estado = fields.Enum(ReservationStatus, required=True)
+    estado = fields.Str(required=True, validate=validate.OneOf([e.value for e in ReservationStatus]))
     notas_barbero = fields.Str(required=False, validate=validate.Length(max=500))
     precio_final = fields.Decimal(required=False, validate=validate.Range(min=0))
 
@@ -115,7 +120,7 @@ class ReservationResponseSchema(Schema):
     servicio = fields.Method("get_servicio_info")
     
     def get_estado(self, obj):
-        return obj.estado.value if obj.estado else None
+        return obj.estado if obj.estado else None
     
     def get_barbero_info(self, obj):
         if obj.barbero:

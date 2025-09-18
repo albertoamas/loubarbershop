@@ -1,35 +1,34 @@
 <template>
-  <div class="p-8 bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen font-sans">
-    <!-- Header del dashboard modernizado -->
-    <div class="mb-6 bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-      <div class="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
+  <div class="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200 p-4 md:p-8 font-inter">
+    <!-- Header modernizado -->
+    <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-3xl shadow-2xl p-8 mb-8 text-white">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
         <div class="flex-1">
-          <h1 class="text-3xl font-extrabold bg-gradient-to-r from-black to-gray-500 bg-clip-text text-transparent mb-2">
+          <h1 class="text-3xl md:text-4xl font-black mb-2 bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
             Calendario de Reservas
           </h1>
-          <p class="text-lg text-slate-600 font-medium">
-            Gestiona y visualiza todas las citas programadas
-          </p>
+          <p class="text-slate-300 text-lg font-medium">Gestiona y visualiza todas las citas programadas</p>
         </div>
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <button 
+            @click="mostrarModalNuevaReserva = true"
+            class="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-bold text-sm hover:from-blue-600 hover:to-blue-700 transition-all duration-200 hover:transform hover:-translate-y-1 shadow-lg hover:shadow-xl"
+          >
+            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Nueva Reserva
+          </button>
           <button 
             @click="cargarDatos" 
             :disabled="loading"
-            class="flex items-center justify-center px-6 py-3 bg-gradient-to-r from-black to-gray-500 text-white border-none rounded-xl font-semibold text-sm cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+            class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl font-bold text-sm hover:bg-white/20 transition-all duration-200 hover:transform hover:-translate-y-1 backdrop-blur-sm"
+            :class="{ 'opacity-50 cursor-not-allowed': loading }"
           >
-            <svg :class="{ 'animate-spin': loading }" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            {{ loading ? 'Actualizando...' : 'Actualizar' }}
-          </button>
-          <button 
-            @click="mostrarModalNuevaReserva = true"
-            class="flex items-center justify-center px-6 py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white border-none rounded-xl font-semibold text-sm cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-          >
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-            Nueva Reserva
+            {{ loading ? 'Cargando...' : 'Actualizar' }}
           </button>
         </div>
       </div>
@@ -849,15 +848,5 @@ onMounted(async () => {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-}
-
-/* Animación para el botón de actualizar */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
 }
 </style>

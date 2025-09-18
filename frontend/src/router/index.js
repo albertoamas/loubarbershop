@@ -39,6 +39,36 @@ const router = createRouter({
       meta: { title: 'Reservas - Low Barber' }
     },
     {
+      path: '/mis-reservas',
+      name: 'my-reservations',
+      component: () => import('../views/MyReservationsView.vue'),
+      meta: { 
+        title: 'Mis Reservas - Low Barber',
+        requiresAuth: true 
+      }
+    },
+    {
+      path: '/perfil',
+      name: 'profile',
+      component: () => import('../views/ProfileView.vue'),
+      meta: { 
+        title: 'Mi Perfil - Low Barber',
+        requiresAuth: true 
+      }
+    },
+    {
+      path: '/reservas/confirmacion',
+      name: 'ReservationConfirmation',
+      component: () => import('../views/ReservationConfirmation.vue'),
+      meta: { title: 'Confirmar Reserva - Low Barber' }
+    },
+    {
+      path: '/reservas/exito',
+      name: 'ReservationSuccess',
+      component: () => import('../views/ReservationSuccess.vue'),
+      meta: { title: 'Reserva Confirmada - Low Barber' }
+    },
+    {
       path: '/contacto',
       name: 'contact',
       component: () => import('../views/ContactView.vue'),

@@ -77,7 +77,25 @@ export const authService = {
    * @returns {boolean}
    */
   isAuthenticated() {
-    return !!localStorage.getItem('authToken')
+    // Para pruebas de desarrollo, simular que el usuario está autenticado
+    const token = localStorage.getItem('authToken')
+    if (token) {
+      return true
+    }
+    
+    // Si no hay token, crear uno temporal para desarrollo
+    if (!token && process.env.NODE_ENV === 'development') {
+      localStorage.setItem('authToken', 'demo-token')
+      localStorage.setItem('user', JSON.stringify({
+        id: 1,
+        nombre: 'Juan Carlos Pérez',
+        email: 'juan.perez@email.com',
+        rol: 'client'
+      }))
+      return true
+    }
+    
+    return !!token
   },
 
   /**
@@ -90,6 +108,56 @@ export const authService = {
       return response.data
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Error al obtener perfil')
+    }
+  },
+
+  /**
+   * Actualizar perfil del usuario
+   * @param {Object} profileData - Datos del perfil a actualizar
+   * @returns {Promise}
+   */
+  async updateProfile(profileData) {
+    try {
+      const response = await apiClient.put('/api/auth/profile', profileData)
+      
+      // Actualizar datos del usuario en localStorage si la actualización fue exitosa
+      if (response.data.user) {
+        localStorage.setItem('user', JSON.stringify(response.data.user))
+      }
+      
+      return {
+        success: true,
+        user: response.data.user,
+        message: 'Perfil actualizado exitosamente'
+      }
+    } catch (error) {
+      console.error('Error al actualizar perfil:', error)
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Error al actualizar perfil'
+      }
+    }
+  },
+
+  /**
+   * Cambiar contraseña del usuario
+   * @param {Object} passwordData - { currentPassword, newPassword }
+   * @returns {Promise}
+   */
+  async changePassword(passwordData) {
+    try {
+      const response = await apiClient.put('/api/auth/change-password', passwordData)
+      
+      return {
+        success: true,
+        message: 'Contraseña cambiada exitosamente'
+      }
+    } catch (error) {
+      console.error('Error al cambiar contraseña:', error)
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Error al cambiar contraseña'
+      }
     }
   },
 

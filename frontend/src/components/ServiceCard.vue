@@ -72,7 +72,7 @@
       <!-- Botón de acción -->
       <button 
         @click="selectService"
-        class="w-full bg-gradient-to-r from-black to-gray-800 text-white px-8 py-4 rounded-xl font-bold text-sm tracking-wide hover:from-gray-800 hover:to-gray-900 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+        class="w-full bg-gradient-to-r from-[var(--color-barber-primary)] to-[color-mix(in_srgb,var(--color-barber-primary),black_20%)] text-white px-8 py-4 rounded-xl font-bold text-sm tracking-wide hover:from-[var(--color-barber-gold)] hover:to-[color-mix(in_srgb,var(--color-barber-gold),black_20%)] transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
       >
         RESERVAR AHORA
       </button>
@@ -123,6 +123,7 @@ export default {
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

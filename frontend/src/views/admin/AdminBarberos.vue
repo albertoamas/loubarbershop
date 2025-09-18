@@ -1,409 +1,408 @@
 <!--
   AdminBarberos.vue - Gestión completa de barberos
-  FASE 8.3: Rediseño minimalista y moderno
+  FASE 8.3: Rediseño minimalista y moderno con el estilo premium aplicado
 -->
 <template>
-  <div class="admin-barberos">
-    <!-- Header con acciones -->
-    <div class="admin-header">
-      <div>
-        <h1 class="admin-title">
-          Gestión de Barberos
-        </h1>
-        <p class="admin-subtitle">Administra el equipo de barberos y sus horarios</p>
+  <div class="p-8 bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen font-sans">
+    <!-- Header del dashboard modernizado -->
+    <div class="mb-6 bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+      <div class="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
+        <div class="flex-1">
+          <h1 class="text-3xl font-extrabold bg-gradient-to-r from-black to-gray-500 bg-clip-text text-transparent mb-2">
+            Gestión de Barberos
+          </h1>
+          <p class="text-lg text-slate-600 font-medium">
+            Administra el equipo de barberos y sus horarios de Low Barber Shop
+          </p>
+        </div>
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+          <button 
+            @click="loadBarbers" 
+            :disabled="loadingBarbers"
+            class="flex items-center justify-center px-6 py-3 bg-gradient-to-r from-black to-gray-500 text-white border-none rounded-xl font-semibold text-sm cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+          >
+            <svg :class="{ 'animate-spin': loadingBarbers }" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            {{ loadingBarbers ? 'Actualizando...' : 'Actualizar' }}
+          </button>
+          <button 
+            class="flex items-center justify-center px-6 py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white border-none rounded-xl font-semibold text-sm cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+            @click="openCreateModal"
+          >
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            Nuevo Barbero
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grid de estadísticas modernizado -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <!-- Total de barberos -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all duration-300 hover:transform hover:-translate-y-1">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Total</h3>
+            <p class="text-3xl font-black text-blue-600">{{ stats.total || 0 }}</p>
+          </div>
+          <div class="w-14 h-14 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center">
+            <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Barberos activos -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all duration-300 hover:transform hover:-translate-y-1">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Activos</h3>
+            <p class="text-3xl font-black text-green-600">{{ stats.activos || 0 }}</p>
+          </div>
+          <div class="w-14 h-14 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center">
+            <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Disponibles hoy -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all duration-300 hover:transform hover:-translate-y-1">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Disponibles</h3>
+            <p class="text-3xl font-black text-purple-600">{{ stats.disponibles_hoy || 0 }}</p>
+          </div>
+          <div class="w-14 h-14 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center">
+            <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Promedio de reservas -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all duration-300 hover:transform hover:-translate-y-1">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Promedio</h3>
+            <p class="text-3xl font-black text-orange-600">{{ stats.promedio_reservas || 0 }}</p>
+          </div>
+          <div class="w-14 h-14 bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl flex items-center justify-center">
+            <svg class="w-7 h-7 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros modernizados -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 mb-6">
+      <div class="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
+        <input
+          v-model="searchTerm"
+          type="text"
+          placeholder="Buscar barberos..."
+          class="flex-1 min-w-0 px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm font-medium focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200"
+        />
+        
+        <select v-model="statusFilter" class="px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm font-medium focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 min-w-[180px]">
+          <option value="">Todos los estados</option>
+          <option value="true">Disponibles</option>
+          <option value="false">No Disponibles</option>
+        </select>
+        
+        <select v-model="especialidadFilter" class="px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm font-medium focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-200 min-w-[200px]">
+          <option value="">Todas las especialidades</option>
+          <option value="Especialista en cortes modernos">Cortes Modernos</option>
+          <option value="Barba y Bigote">Barba y Bigote</option>
+          <option value="Tratamientos">Tratamientos</option>
+          <option value="Cortes Clásicos">Cortes Clásicos</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Lista de barberos modernizada -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+      <div v-if="loadingBarbers" class="flex flex-col items-center justify-center py-16 text-gray-500">
+        <div class="w-12 h-12 border-3 border-gray-200 border-t-violet-500 rounded-full animate-spin mb-4"></div>
+        <p class="text-lg font-medium">Cargando barberos...</p>
       </div>
       
-      <div class="header-actions">
-        <button
-          @click="loadBarbers"
-          class="btn-secondary"
-        >
-          Actualizar
-        </button>
-        <button
-          @click="openCreateModal"
-          class="btn-primary"
-        >
-          Nuevo Barbero
+      <div v-else-if="filteredBarbers.length === 0" class="flex flex-col items-center justify-center py-16 text-gray-500 text-center">
+        <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">No se encontraron barberos</h3>
+        <p class="text-gray-500 mb-6">No hay barberos que coincidan con los filtros aplicados.</p>
+        <button @click="openCreateModal" class="flex items-center justify-center px-6 py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white border-none rounded-xl font-semibold text-sm cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+          Crear primer barbero
         </button>
       </div>
-    </div>
-
-    <!-- Estadísticas rápidas -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-content">
-          <div class="stat-number">{{ stats.total || 0 }}</div>
-          <div class="stat-label">Total Barberos</div>
-        </div>
-        <div class="stat-icon">
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="stat-card stat-success">
-        <div class="stat-content">
-          <div class="stat-number">{{ stats.activos || 0 }}</div>
-          <div class="stat-label">Activos</div>
-        </div>
-        <div class="stat-icon">
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="stat-card stat-info">
-        <div class="stat-content">
-          <div class="stat-number">{{ stats.disponibles_hoy || 0 }}</div>
-          <div class="stat-label">Disponibles Hoy</div>
-        </div>
-        <div class="stat-icon">
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
-            <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="stat-card stat-purple">
-        <div class="stat-content">
-          <div class="stat-number">{{ stats.promedio_reservas || 0 }}</div>
-          <div class="stat-label">Promedio Reservas</div>
-        </div>
-        <div class="stat-icon">
-          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
-          </svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tabla de barberos -->
-    <AdminTable
-      title="Lista de Barberos"
-      description="Gestiona todos los barberos del sistema"
-      :data="filteredBarbers"
-      :columns="tableColumns"
-      :loading="loadingBarbers"
-      :selectable="true"
-      searchPlaceholder="Buscar por nombre o especialidad..."
-      emptyMessage="No se encontraron barberos"
-      @update:selected="selectedBarbers = $event"
-    >
-      <!-- Filtros personalizados -->
-      <template #filters>
-        <div class="filters-container">
-          <select
-            v-model="statusFilter"
-            class="filter-select"
-          >
-            <option value="">Todos los estados</option>
-            <option value="true">Disponibles</option>
-            <option value="false">No Disponibles</option>
-          </select>
-          
-          <select
-            v-model="especialidadFilter"
-            class="filter-select"
-          >
-            <option value="">Todas las especialidades</option>
-            <option value="Especialista en cortes modernos">Cortes Modernos</option>
-            <option value="Barba y Bigote">Barba y Bigote</option>
-            <option value="Tratamientos">Tratamientos</option>
-            <option value="Cortes Clásicos">Cortes Clásicos</option>
-          </select>
-        </div>
-      </template>
-
-      <!-- Celda personalizada para avatar y nombre -->
-      <template #cell-nombre="{ item }">
-        <div class="barbero-info">
-          <div class="barbero-avatar">
-            <img
-              v-if="item.avatar"
-              :src="item.avatar"
-              :alt="item.nombre"
-              class="avatar-img"
-            />
-            <div
-              v-else
-              class="avatar-placeholder"
-            >
-              {{ getInitials(item.nombre) }}
+      
+      <div v-else class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div
+          v-for="barber in filteredBarbers"
+          :key="barber.id"
+          class="bg-slate-50 border border-slate-200 rounded-2xl p-6 transition-all duration-200 hover:border-violet-400 hover:shadow-lg hover:-translate-y-0.5"
+        >
+          <div class="flex items-start gap-4 mb-4">
+            <div class="w-12 h-12 flex-shrink-0">
+              <img
+                v-if="barber.avatar"
+                :src="barber.avatar"
+                :alt="barber.nombre"
+                class="w-full h-full rounded-xl object-cover border-2 border-slate-300"
+              />
+              <div v-else class="w-full h-full rounded-xl bg-gradient-to-br from-black to-gray-500 text-white flex items-center justify-center font-semibold text-sm">
+                {{ getInitials(barber.nombre) }}
+              </div>
+            </div>
+            
+            <div class="flex-1 min-w-0">
+              <h3 class="font-semibold text-gray-900 text-base mb-1 truncate">{{ barber.nombre }}</h3>
+              <p class="text-gray-500 text-sm mb-2 truncate">{{ barber.email }}</p>
+              <span class="inline-flex items-center px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-xs font-medium border border-gray-300">
+                {{ barber.especialidad }}
+              </span>
+            </div>
+            
+            <div class="flex-shrink-0">
+              <span :class="['inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold', 
+                barber.disponible 
+                  ? 'bg-green-50 text-green-700 border border-green-200' 
+                  : 'bg-red-50 text-red-700 border border-red-200']">
+                <div :class="['w-2 h-2 rounded-full', 
+                  barber.disponible ? 'bg-green-500' : 'bg-red-500']"></div>
+                {{ barber.disponible ? 'Disponible' : 'No Disponible' }}
+              </span>
             </div>
           </div>
-          <div class="barbero-details">
-            <div class="barbero-nombre">{{ item.nombre }}</div>
-            <div class="barbero-email">{{ item.email }}</div>
-          </div>
-        </div>
-      </template>
-
-      <!-- Celda personalizada para especialidad -->
-      <template #cell-especialidad="{ item }">
-        <span class="especialidad-badge">
-          {{ item.especialidad }}
-        </span>
-      </template>
-
-      <!-- Celda personalizada para estado -->
-      <template #cell-disponible="{ item }">
-        <span :class="['status-badge', item.disponible ? 'status-available' : 'status-unavailable']">
-          <div class="status-dot"></div>
-          {{ item.disponible ? 'Disponible' : 'No Disponible' }}
-        </span>
-      </template>
-
-      <!-- Celda personalizada para horario -->
-      <template #cell-horario="{ item }">
-        <div class="horario-info">
-          <div class="horario-time">
-            {{ item.horario_inicio || '09:00' }} - {{ item.horario_fin || '18:00' }}
-          </div>
-          <div class="horario-days">
-            {{ getWorkingDays(item.dias_trabajo) }}
-          </div>
-        </div>
-      </template>
-
-      <!-- Acciones por fila -->
-      <template #actions="{ item }">
-        <div class="action-buttons">
-          <button
-            @click="editBarber(item)"
-            class="action-btn action-edit"
-            title="Editar barbero"
-          >
-            Editar
-          </button>
           
-          <button
-            @click="manageSchedule(item)"
-            class="action-btn action-schedule"
-            title="Gestionar horarios"
-          >
-            Horarios
-          </button>
-        </div>
-      </template>
-
-      <!-- Acciones masivas -->
-      <template #bulk-actions="{ selectedItems }">
-        <div class="bulk-actions">
-          <button
-            @click="bulkActivate(selectedItems)"
-            class="bulk-btn bulk-activate"
-          >
-            Activar ({{ selectedItems.length }})
-          </button>
+          <div class="space-y-3 mb-4">
+            <div class="flex justify-between items-center">
+              <span class="text-sm font-medium text-gray-600">Horario:</span>
+              <span class="text-sm text-gray-900 font-medium">
+                {{ barber.horario_inicio || '09:00' }} - {{ barber.horario_fin || '18:00' }}
+              </span>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-sm font-medium text-gray-600">Días:</span>
+              <span class="text-sm text-gray-900 font-medium">{{ getWorkingDays(barber.dias_trabajo) }}</span>
+            </div>
+            
+            <div v-if="barber.experiencia" class="flex justify-between items-center">
+              <span class="text-sm font-medium text-gray-600">Experiencia:</span>
+              <span class="text-sm text-gray-900 font-medium">{{ barber.experiencia }}</span>
+            </div>
+          </div>
           
-          <button
-            @click="bulkDeactivate(selectedItems)"
-            class="bulk-btn bulk-deactivate"
-          >
-            Desactivar ({{ selectedItems.length }})
+          <div class="flex gap-2 justify-end flex-wrap">
+            <button @click="editBarber(barber)" class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium border rounded-lg cursor-pointer transition-all duration-200 bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 hover:border-amber-300">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Editar
+            </button>
+            
+            <button @click="manageSchedule(barber)" class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium border rounded-lg cursor-pointer transition-all duration-200 bg-green-50 text-green-700 border-green-200 hover:bg-green-100 hover:border-green-300">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Horarios
+            </button>
+            
+            <button @click="deleteBarber(barber)" class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium border rounded-lg cursor-pointer transition-all duration-200 bg-red-50 text-red-700 border-red-200 hover:bg-red-100 hover:border-red-300">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para crear/editar barbero modernizado -->
+    <div v-if="showBarberModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center px-8 py-6 border-b border-gray-200">
+          <h2 class="text-xl font-semibold text-gray-900">{{ isEditing ? 'Editar Barbero' : 'Nuevo Barbero' }}</h2>
+          <button @click="closeBarberModal" class="p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-all duration-200">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
-      </template>
-    </AdminTable>
+        
+        <form @submit.prevent="saveBarber" class="p-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="space-y-2">
+              <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre completo *</label>
+              <input
+                id="nombre"
+                v-model="barberForm.nombre"
+                type="text"
+                required
+                placeholder="Ej: Juan Pérez"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm text-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+              />
+            </div>
 
-    <!-- Modal para crear/editar barbero -->
-    <AdminModal
-      :show="showBarberModal"
-      :title="isEditing ? 'Editar Barbero' : 'Nuevo Barbero'"
-      :description="isEditing ? 'Modifica los datos del barbero' : 'Crea un nuevo barbero en el sistema'"
-      size="lg"
-      :loading="savingBarber"
-      :saveDisabled="!isBarberFormValid"
-      @close="closeBarberModal"
-      @save="saveBarber"
-      showActions
-    >
-      <form @submit.prevent="saveBarber" class="space-y-6">
-        <!-- Información básica -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label for="nombre" class="block text-sm font-medium text-gray-700 mb-2">
-              Nombre completo *
-            </label>
-            <input
-              id="nombre"
-              v-model="barberForm.nombre"
-              type="text"
-              required
-              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Ej: Juan Pérez"
-            />
-          </div>
+            <div class="space-y-2">
+              <label for="email" class="block text-sm font-medium text-gray-700">Email *</label>
+              <input
+                id="email"
+                v-model="barberForm.email"
+                type="email"
+                required
+                placeholder="juan@ejemplo.com"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm text-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+              />
+            </div>
 
-          <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-              Email *
-            </label>
-            <input
-              id="email"
-              v-model="barberForm.email"
-              type="email"
-              required
-              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="juan@ejemplo.com"
-            />
-          </div>
+            <div class="space-y-2">
+              <label for="telefono" class="block text-sm font-medium text-gray-700">Teléfono</label>
+              <input
+                id="telefono"
+                v-model="barberForm.telefono"
+                type="tel"
+                placeholder="+34 123 456 789"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm text-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+              />
+            </div>
 
-          <div>
-            <label for="telefono" class="block text-sm font-medium text-gray-700 mb-2">
-              Teléfono
-            </label>
-            <input
-              id="telefono"
-              v-model="barberForm.telefono"
-              type="tel"
-              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="+34 123 456 789"
-            />
-          </div>
+            <div class="space-y-2">
+              <label for="especialidad" class="block text-sm font-medium text-gray-700">Especialidad *</label>
+              <select id="especialidad" v-model="barberForm.especialidad" required class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm text-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent">
+                <option value="">Selecciona una especialidad</option>
+                <option value="Especialista en cortes modernos">Cortes Modernos</option>
+                <option value="Barba y Bigote">Barba y Bigote</option>
+                <option value="Tratamientos">Tratamientos</option>
+                <option value="Cortes Clásicos">Cortes Clásicos</option>
+              </select>
+            </div>
 
-          <div>
-            <label for="especialidad" class="block text-sm font-medium text-gray-700 mb-2">
-              Especialidad *
-            </label>
-            <select
-              id="especialidad"
-              v-model="barberForm.especialidad"
-              required
-              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">Seleccionar especialidad</option>
-              <option value="Cortes Clásicos">Cortes Clásicos</option>
-              <option value="Barba y Bigote">Barba y Bigote</option>
-              <option value="Tratamientos">Tratamientos</option>
-              <option value="Cortes Modernos">Cortes Modernos</option>
-              <option value="Estilismo">Estilismo</option>
-            </select>
-          </div>
-        </div>
+            <div class="space-y-2">
+              <label for="experiencia" class="block text-sm font-medium text-gray-700">Experiencia</label>
+              <input
+                id="experiencia"
+                v-model="barberForm.experiencia"
+                type="text"
+                placeholder="Ej: 5 años"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm text-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+              />
+            </div>
 
-        <!-- Información adicional -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label for="experiencia" class="block text-sm font-medium text-gray-700 mb-2">
-              Experiencia
-            </label>
-            <input
-              id="experiencia"
-              v-model="barberForm.experiencia"
-              type="text"
-              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Ej: 5 años"
-            />
-          </div>
+            <div class="space-y-2">
+              <label for="disponible" class="block text-sm font-medium text-gray-700">Estado</label>
+              <select id="disponible" v-model="barberForm.disponible" class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm text-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent">
+                <option :value="true">Disponible</option>
+                <option :value="false">No Disponible</option>
+              </select>
+            </div>
 
-          <div>
-            <label for="disponible" class="block text-sm font-medium text-gray-700 mb-2">
-              Estado
-            </label>
-            <select
-              id="disponible"
-              v-model="barberForm.disponible"
-              class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option :value="true">Disponible</option>
-              <option :value="false">No Disponible</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Horario de trabajo -->
-        <div>
-          <h3 class="text-lg font-medium text-gray-900 mb-4">Horario de Trabajo</h3>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-            <div>
-              <label for="horario_inicio" class="block text-sm font-medium text-gray-700 mb-2">
-                Hora de inicio
-              </label>
+            <div class="space-y-2">
+              <label for="horario_inicio" class="block text-sm font-medium text-gray-700">Hora de inicio</label>
               <input
                 id="horario_inicio"
                 v-model="barberForm.horario_inicio"
                 type="time"
-                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm text-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
               />
             </div>
 
-            <div>
-              <label for="horario_fin" class="block text-sm font-medium text-gray-700 mb-2">
-                Hora de fin
-              </label>
+            <div class="space-y-2">
+              <label for="horario_fin" class="block text-sm font-medium text-gray-700">Hora de fin</label>
               <input
                 id="horario_fin"
                 v-model="barberForm.horario_fin"
                 type="time"
-                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm text-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
               />
             </div>
           </div>
 
-          <!-- Días de trabajo -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Días de trabajo
-            </label>
-            <div class="grid grid-cols-4 md:grid-cols-7 gap-2">
+          <div class="space-y-2 mb-6">
+            <label class="block text-sm font-medium text-gray-700">Días de trabajo</label>
+            <div class="grid grid-cols-3 md:grid-cols-7 gap-2">
               <label
                 v-for="day in weekDays"
                 :key="day.value"
-                class="flex items-center space-x-2 text-sm"
+                :class="['flex items-center justify-center px-3 py-3 border rounded-xl cursor-pointer transition-all duration-200 text-sm font-medium',
+                  barberForm.dias_trabajo.includes(day.value) 
+                    ? 'bg-violet-100 border-violet-400 text-violet-700' 
+                    : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50 hover:border-gray-400']"
               >
                 <input
-                  v-model="barberForm.dias_trabajo"
-                  :value="day.value"
                   type="checkbox"
-                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  :value="day.value"
+                  v-model="barberForm.dias_trabajo"
+                  class="hidden"
                 />
                 <span>{{ day.label }}</span>
               </label>
             </div>
           </div>
-        </div>
-      </form>
-    </AdminModal>
 
-    <!-- Modal de confirmación para eliminar -->
-    <AdminModal
-      :show="showDeleteModal"
-      type="confirm"
-      confirmType="danger"
-      title="Eliminar Barbero"
-      confirmMessage="¿Estás seguro de que quieres eliminar este barbero? Esta acción no se puede deshacer."
-      confirmText="Eliminar"
-      cancelText="Cancelar"
-      :loading="deletingBarber"
-      @confirm="confirmDelete"
-      @cancel="closeDeleteModal"
-      showActions
-    />
+          <div class="flex justify-end gap-3 pt-6 border-t border-gray-200 bg-gray-50 -mx-8 -mb-8 px-8 py-6 rounded-b-2xl">
+            <button type="button" @click="closeBarberModal" class="px-6 py-3 bg-white text-gray-600 border border-gray-300 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              :disabled="!isBarberFormValid || savingBarber"
+              class="px-6 py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white border-none rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:-translate-y-0.5"
+            >
+              {{ savingBarber ? 'Guardando...' : (isEditing ? 'Actualizar' : 'Crear') }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal de confirmación para eliminar modernizado -->
+    <div v-if="showDeleteModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+        <div class="px-8 py-6 border-b border-gray-200">
+          <h2 class="text-xl font-semibold text-gray-900">Eliminar Barbero</h2>
+        </div>
+        
+        <div class="p-8">
+          <p class="text-gray-600 mb-2">¿Estás seguro de que quieres eliminar a <strong>{{ currentBarber?.nombre }}</strong>?</p>
+          <p class="text-sm text-gray-500">Esta acción no se puede deshacer.</p>
+        </div>
+        
+        <div class="flex justify-end gap-3 px-8 py-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+          <button @click="closeDeleteModal" class="px-6 py-3 bg-white text-gray-600 border border-gray-300 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+            Cancelar
+          </button>
+          <button
+            @click="confirmDelete"
+            :disabled="deletingBarber"
+            class="px-6 py-3 bg-red-500 text-white border-none rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-600"
+          >
+            {{ deletingBarber ? 'Eliminando...' : 'Eliminar' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { ref, computed, onMounted } from 'vue'
-import AdminCard from '@/components/admin/AdminCard.vue'
-import AdminTable from '@/components/admin/AdminTable.vue'
-import AdminModal from '@/components/admin/AdminModal.vue'
-import AdminButton from '@/components/admin/AdminButton.vue'
 import { barberService } from '@/services/barberService'
 
 export default {
   name: 'AdminBarberos',
-  components: {
-    AdminCard,
-    AdminTable,
-    AdminModal,
-    AdminButton
-  },
   setup() {
     // Estado reactivo
     const loadingStats = ref(true)
@@ -412,11 +411,11 @@ export default {
     const deletingBarber = ref(false)
     
     const barbers = ref([])
-    const selectedBarbers = ref([])
     const stats = ref({})
-    const modoDemo = ref(false) // Indicador de modo demo
+    const modoDemo = ref(false)
     
     // Filtros
+    const searchTerm = ref('')
     const statusFilter = ref('')
     const especialidadFilter = ref('')
     
@@ -439,29 +438,6 @@ export default {
       dias_trabajo: ['lunes', 'martes', 'miércoles', 'jueves', 'viernes']
     })
     
-    // Configuración de tabla
-    const tableColumns = [
-      {
-        key: 'nombre',
-        label: 'Barbero',
-        sortable: true
-      },
-      {
-        key: 'especialidad',
-        label: 'Especialidad',
-        sortable: true
-      },
-      {
-        key: 'disponible',
-        label: 'Estado',
-        sortable: true
-      },
-      {
-        key: 'horario',
-        label: 'Horario'
-      }
-    ]
-    
     // Días de la semana
     const weekDays = [
       { value: 'lunes', label: 'Lun' },
@@ -477,11 +453,23 @@ export default {
     const filteredBarbers = computed(() => {
       let filtered = [...barbers.value]
       
+      // Filtro por término de búsqueda
+      if (searchTerm.value) {
+        const term = searchTerm.value.toLowerCase()
+        filtered = filtered.filter(barber => 
+          barber.nombre.toLowerCase().includes(term) ||
+          barber.email.toLowerCase().includes(term) ||
+          (barber.especialidad && barber.especialidad.toLowerCase().includes(term))
+        )
+      }
+      
+      // Filtro por estado
       if (statusFilter.value !== '') {
         const isDisponible = statusFilter.value === 'true'
         filtered = filtered.filter(barber => barber.disponible === isDisponible)
       }
       
+      // Filtro por especialidad
       if (especialidadFilter.value) {
         filtered = filtered.filter(barber => 
           barber.especialidad && barber.especialidad.includes(especialidadFilter.value)
@@ -501,18 +489,13 @@ export default {
     const loadBarbers = async () => {
       try {
         loadingBarbers.value = true
-        console.log('Cargando barberos...')
         const data = await barberService.getAll()
-        console.log('Datos de barberos recibidos:', data)
         barbers.value = data
         modoDemo.value = false
-        console.log('Barberos cargados - Total:', barbers.value.length)
       } catch (error) {
         console.error('Error cargando barberos:', error)
-        // Si hay error, usar datos de fallback del servicio
         barbers.value = barberService.getFallbackBarbers()
         modoDemo.value = true
-        console.log('Usando fallback - Total barberos:', barbers.value.length)
       } finally {
         loadingBarbers.value = false
       }
@@ -521,27 +504,19 @@ export default {
     const loadStats = async () => {
       try {
         loadingStats.value = true
-        console.log('Cargando estadísticas...')
         const data = await barberService.getStats()
-        console.log('Datos de estadísticas procesados:', data)
         
-        // El servicio ya procesa los datos correctamente
         stats.value = {
           total: data.total || 0,
           activos: data.activos || 0,
           disponibles_hoy: data.disponibles_hoy || data.activos || 0,
           promedio_reservas: data.promedio_reservas || 0
         }
-        
-        console.log('Estadísticas finales:', stats.value)
       } catch (error) {
         console.error('Error cargando estadísticas:', error)
         
-        // Calcular estadísticas basadas en los barberos cargados
         const totalBarbers = barbers.value.length
         const activeBarberos = barbers.value.filter(b => b.disponible).length
-        
-        console.log('Usando fallback - Total barberos:', totalBarbers, 'Activos:', activeBarberos)
         
         stats.value = {
           total: totalBarbers,
@@ -584,7 +559,6 @@ export default {
       currentBarber.value = barber
       isEditing.value = true
       
-      // Cargar datos en el formulario
       barberForm.value = {
         nombre: barber.nombre || '',
         email: barber.email || '',
@@ -645,54 +619,8 @@ export default {
       }
     }
     
-    const viewBarber = (barber) => {
-      // Implementar vista detallada
-      console.log('Ver barbero:', barber)
-    }
-    
     const manageSchedule = (barber) => {
-      // Implementar gestión de horarios avanzada
       console.log('Gestionar horarios:', barber)
-    }
-    
-    // Acciones masivas
-    const bulkActivate = async (selectedItems) => {
-      try {
-        const promises = selectedItems.map(item => 
-          barberService.update(item.id, { disponible: true })
-        )
-        await Promise.all(promises)
-        await loadBarbers()
-        await loadStats()
-      } catch (error) {
-        console.error('Error activando barberos:', error)
-      }
-    }
-    
-    const bulkDeactivate = async (selectedItems) => {
-      try {
-        const promises = selectedItems.map(item => 
-          barberService.update(item.id, { disponible: false })
-        )
-        await Promise.all(promises)
-        await loadBarbers()
-        await loadStats()
-      } catch (error) {
-        console.error('Error desactivando barberos:', error)
-      }
-    }
-    
-    const bulkDelete = async (selectedItems) => {
-      try {
-        const promises = selectedItems.map(item => 
-          barberService.delete(item.id)
-        )
-        await Promise.all(promises)
-        await loadBarbers()
-        await loadStats()
-      } catch (error) {
-        console.error('Error eliminando barberos:', error)
-      }
     }
     
     // Helpers
@@ -713,20 +641,10 @@ export default {
       }
       
       const dayLabels = {
-        lunes: 'L',
-        martes: 'M',
-        miércoles: 'X',
-        jueves: 'J',
-        viernes: 'V',
-        sábado: 'S',
-        domingo: 'D',
-        monday: 'L',
-        tuesday: 'M',
-        wednesday: 'X',
-        thursday: 'J',
-        friday: 'V',
-        saturday: 'S',
-        sunday: 'D'
+        lunes: 'L', martes: 'M', miércoles: 'X', jueves: 'J',
+        viernes: 'V', sábado: 'S', domingo: 'D',
+        monday: 'L', tuesday: 'M', wednesday: 'X', thursday: 'J',
+        friday: 'V', saturday: 'S', sunday: 'D'
       }
       
       return days.map(day => dayLabels[day] || day.charAt(0).toUpperCase()).join(', ')
@@ -734,7 +652,6 @@ export default {
     
     // Lifecycle
     onMounted(async () => {
-      // Cargar barberos primero, luego estadísticas
       await loadBarbers()
       await loadStats()
     })
@@ -746,9 +663,9 @@ export default {
       savingBarber,
       deletingBarber,
       barbers,
-      selectedBarbers,
       stats,
       modoDemo,
+      searchTerm,
       statusFilter,
       especialidadFilter,
       showBarberModal,
@@ -758,7 +675,6 @@ export default {
       barberForm,
       
       // Configuración
-      tableColumns,
       weekDays,
       
       // Computed
@@ -772,11 +688,10 @@ export default {
       closeBarberModal,
       editBarber,
       saveBarber,
+      deleteBarber,
       closeDeleteModal,
       confirmDelete,
       manageSchedule,
-      bulkActivate,
-      bulkDeactivate,
       
       // Helpers
       getInitials,
@@ -787,386 +702,33 @@ export default {
 </script>
 
 <style scoped>
-.admin-barberos {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  padding: 1.5rem;
-  background-color: #f8fafc;
-  min-height: 100vh;
+/* Estilos esenciales para AdminBarberos */
+
+/* Animaciones necesarias */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-/* Header */
-.admin-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 2rem;
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 
-.admin-title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 0.5rem;
+/* Utilidades para transiciones suaves */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 
-.admin-subtitle {
-  color: #6b7280;
-  font-size: 0.875rem;
-  margin: 0;
+/* Estilos de enfoque personalizados si es necesario */
+.focus-ring:focus {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 2px;
 }
 
-.header-actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-shrink: 0;
-}
-
-/* Botones */
-.btn-primary {
-  background: #000000;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btn-primary:hover {
-  background: #1f2937;
-}
-
-.btn-secondary {
-  background: white;
-  color: #374151;
-  border: 1px solid #d1d5db;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btn-secondary:hover {
-  background: #f9fafb;
-  border-color: #9ca3af;
-}
-
-/* Estadísticas */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.stat-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.stat-content {
-  flex: 1;
-}
-
-.stat-number {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1f2937;
-  line-height: 1;
-  margin-bottom: 0.25rem;
-}
-
-.stat-label {
-  font-size: 0.875rem;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.stat-icon {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f3f4f6;
-  color: #6b7280;
-}
-
-.stat-success .stat-number { color: #059669; }
-.stat-success .stat-icon { background: #d1fae5; color: #059669; }
-
-.stat-info .stat-number { color: #0284c7; }
-.stat-info .stat-icon { background: #dbeafe; color: #0284c7; }
-
-.stat-purple .stat-number { color: #7c3aed; }
-.stat-purple .stat-icon { background: #ede9fe; color: #7c3aed; }
-
-/* Filtros */
-.filters-container {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.filter-select {
-  min-width: 200px;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: white;
-  font-size: 0.875rem;
-  color: #374151;
-}
-
-.filter-select:focus {
-  outline: none;
-  border-color: #000000;
-  box-shadow: 0 0 0 1px #000000;
-}
-
-/* Información del barbero */
-.barbero-info {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.barbero-avatar {
-  width: 2.5rem;
-  height: 2.5rem;
-  flex-shrink: 0;
-}
-
-.avatar-img {
-  width: 100%;
-  height: 100%;
-  border-radius: 8px;
-  object-fit: cover;
-  border: 2px solid #e5e7eb;
-}
-
-.avatar-placeholder {
-  width: 100%;
-  height: 100%;
-  border-radius: 8px;
-  background: #000000;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 0.875rem;
-}
-
-.barbero-details {
-  min-width: 0;
-}
-
-.barbero-nombre {
-  font-weight: 600;
-  color: #1f2937;
-  font-size: 0.875rem;
-}
-
-.barbero-email {
-  color: #6b7280;
-  font-size: 0.75rem;
-}
-
-/* Badges */
-.especialidad-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.75rem;
-  background: #f3f4f6;
-  color: #374151;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  border: 1px solid #e5e7eb;
-}
-
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  gap: 0.5rem;
-}
-
-.status-available {
-  background: #d1fae5;
-  color: #065f46;
-  border: 1px solid #10b981;
-}
-
-.status-unavailable {
-  background: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #ef4444;
-}
-
-.status-dot {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
-}
-
-.status-available .status-dot {
-  background: #10b981;
-}
-
-.status-unavailable .status-dot {
-  background: #ef4444;
-}
-
-/* Horario */
-.horario-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.horario-time {
-  font-weight: 500;
-  color: #1f2937;
-  font-size: 0.875rem;
-}
-
-.horario-days {
-  color: #6b7280;
-  font-size: 0.75rem;
-}
-
-/* Acciones */
-.action-buttons {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: flex-end;
-}
-
-.action-btn {
-  padding: 0.375rem 0.75rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  border-radius: 6px;
-  border: 1px solid;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.action-edit {
-  background: #fffbeb;
-  color: #92400e;
-  border-color: #fbbf24;
-}
-
-.action-edit:hover {
-  background: #fef3c7;
-  border-color: #f59e0b;
-}
-
-.action-schedule {
-  background: #ecfdf5;
-  color: #065f46;
-  border-color: #10b981;
-}
-
-.action-schedule:hover {
-  background: #d1fae5;
-  border-color: #059669;
-}
-
-/* Acciones masivas */
-.bulk-actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.bulk-btn {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  border-radius: 6px;
-  border: 1px solid;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.bulk-activate {
-  background: #ecfdf5;
-  color: #065f46;
-  border-color: #10b981;
-}
-
-.bulk-activate:hover {
-  background: #d1fae5;
-  border-color: #059669;
-}
-
-.bulk-deactivate {
-  background: #fef3c7;
-  color: #92400e;
-  border-color: #fbbf24;
-}
-
-.bulk-deactivate:hover {
-  background: #fde68a;
-  border-color: #f59e0b;
-}
-
-/* Responsividad */
-@media (max-width: 768px) {
-  .admin-barberos {
-    padding: 1rem;
-  }
-  
-  .admin-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
-  }
-  
-  .header-actions {
-    justify-content: flex-end;
-  }
-  
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .filters-container {
-    flex-direction: column;
-  }
-  
-  .filter-select {
-    min-width: 100%;
-  }
-  
-  .action-buttons {
-    flex-direction: column;
-  }
-  
-  .bulk-actions {
-    flex-direction: column;
-  }
+/* Estilos para elementos interactivos */
+.hover-lift:hover {
+  transform: translateY(-2px);
 }
 </style>
