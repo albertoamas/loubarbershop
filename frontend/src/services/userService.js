@@ -261,6 +261,11 @@ export const userService = {
         rol: this.mapFrontendRole(userData.role)
       }
       
+      // Si se está actualizando el estado, incluirlo
+      if (userData.status !== undefined) {
+        backendData.activo = userData.status === 'active'
+      }
+      
       const response = await apiClient.put(`/api/admin/users/${id}`, backendData)
       console.log('✅ Usuario actualizado exitosamente:', response.data)
       return response.data

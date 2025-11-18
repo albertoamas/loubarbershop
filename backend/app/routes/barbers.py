@@ -27,6 +27,7 @@ def get_barbers():
     try:
         # Parámetros opcionales
         status = request.args.get('status')  # Para filtro ?status=active
+        show_all = request.args.get('show_all', 'false').lower() == 'true'  # Para admin
         
         # Construir query
         query = Barber.query
@@ -34,9 +35,10 @@ def get_barbers():
         # Filtrar por estado si se especifica
         if status == 'active':
             query = query.filter_by(disponible=True, activo=True)
-        else:
+        elif not show_all:
             # Solo barberos disponibles para usuarios normales
             query = query.filter_by(disponible=True)
+        # Si show_all=true, no filtramos nada (para admin)
         
         barbers = query.all()
         
@@ -95,6 +97,8 @@ def create_barber():
             nombre=data['nombre'],
             user_id=user.id,
             especialidad=data['especialidad'],
+            descripcion=data.get('descripcion'),
+            experiencia_anos=data.get('experiencia_anos', 0),
             disponible=data.get('disponible', True)
         )
         
@@ -149,14 +153,21 @@ def update_barber(barber_id):
         # Actualizar campos del barbero
         if 'especialidad' in data:
             barber.especialidad = data['especialidad']
+        if 'descripcion' in data:
+            barber.descripcion = data['descripcion']
+        if 'experiencia_anos' in data:
+            barber.experiencia_anos = data['experiencia_anos']
         if 'disponible' in data:
             barber.disponible = data['disponible']
         if 'activo' in data:
             barber.activo = data['activo']
+        if 'horario_trabajo' in data:
+            barber.horario_trabajo = data['horario_trabajo']
             
         # Actualizar campos del usuario asociado
         if 'nombre' in data:
             barber.usuario.nombre = data['nombre']
+            barber.nombre = data['nombre']
         if 'telefono' in data:
             barber.usuario.telefono = data['telefono']
         

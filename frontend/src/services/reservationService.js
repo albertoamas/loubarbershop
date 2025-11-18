@@ -17,8 +17,15 @@ const reservationService = {
       const response = await apiClient.get('/api/reservations', { params: filters })
       console.log('✅ Reservas obtenidas del backend:', response.data)
       
-      // El backend devuelve { reservas: [...], total: number }
-      const reservas = response.data.reservas || []
+      // El backend puede devolver { data: [...], total: number } o { reservas: [...], total: number }
+      const reservas = response.data.data || response.data.reservas || response.data || []
+      console.log('📋 Reservas extraídas:', reservas)
+      
+      // Verificar si es un array válido
+      if (!Array.isArray(reservas)) {
+        console.log('⚠️ Los datos no son un array:', reservas)
+        return this.getFallbackReservations()
+      }
       
       // Transformar datos para que coincidan con el frontend
       const reservasTransformadas = reservas.map(reserva => ({
@@ -137,6 +144,61 @@ const reservationService = {
       return response.data
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Error al actualizar el estado')
+    }
+  },
+
+  /**
+   * Confirmar reserva
+   */
+  async confirm(id, notas_barbero = null) {
+    try {
+      console.log('🔄 Confirmando reserva:', id)
+      const data = {}
+      if (notas_barbero) data.notas_barbero = notas_barbero
+      
+      const response = await apiClient.post(`/api/reservations/${id}/confirm`, data)
+      console.log('✅ Reserva confirmada exitosamente')
+      return response.data
+    } catch (error) {
+      console.error('❌ Error confirmando reserva:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Completar reserva
+   */
+  async complete(id, precio_final = null, notas_barbero = null) {
+    try {
+      console.log('🔄 Completando reserva:', id)
+      const data = {}
+      if (precio_final) data.precio_final = precio_final
+      if (notas_barbero) data.notas_barbero = notas_barbero
+      
+      const response = await apiClient.post(`/api/reservations/${id}/complete`, data)
+      console.log('✅ Reserva completada exitosamente')
+      return response.data
+    } catch (error) {
+      console.error('❌ Error completando reserva:', error)
+      throw error
+    }
+  },
+
+  /**
+   * Cancelar reserva
+   */
+  async cancel(id, notas_barbero = null) {
+    try {
+      console.log('🔄 Cancelando reserva:', id)
+      const data = {}
+      if (notas_barbero) data.notas_barbero = notas_barbero
+      
+      const response = await apiClient.post(`/api/reservations/${id}/cancel`, data)
+      console.log('✅ Reserva cancelada exitosamente')
+      return response.data
+    } catch (error) {
+      console.error('❌ Error cancelando reserva:', error)
+      throw error
     }
   },
 

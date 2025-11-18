@@ -53,8 +53,9 @@ def register():
         # Guardar en la base de datos
         user.save()
         
-        # Crear tokens
-        access_token = create_access_token(identity=str(user.id))
+        # Crear tokens con el rol incluido
+        additional_claims = {'rol': user.rol.value}
+        access_token = create_access_token(identity=str(user.id), additional_claims=additional_claims)
         refresh_token = create_refresh_token(identity=str(user.id))
         
         return jsonify({
@@ -98,8 +99,9 @@ def login():
                 'message': 'Tu cuenta ha sido desactivada. Contacta al administrador.'
             }), 401
         
-        # Crear tokens
-        access_token = create_access_token(identity=str(user.id))
+        # Crear tokens con el rol incluido
+        additional_claims = {'rol': user.rol.value}
+        access_token = create_access_token(identity=str(user.id), additional_claims=additional_claims)
         refresh_token = create_refresh_token(identity=str(user.id))
         
         return jsonify({
@@ -134,8 +136,9 @@ def refresh():
                 'message': 'No se puede renovar el token'
             }), 401
         
-        # Crear nuevo token de acceso
-        access_token = create_access_token(identity=str(user.id))
+        # Crear nuevo token de acceso con el rol incluido
+        additional_claims = {'rol': user.rol.value}
+        access_token = create_access_token(identity=str(user.id), additional_claims=additional_claims)
         
         return jsonify({
             'access_token': access_token
@@ -353,8 +356,9 @@ def create_admin():
         db.session.add(admin_user)
         db.session.commit()
         
-        # Crear token de acceso
-        access_token = create_access_token(identity=str(admin_user.id))
+        # Crear token de acceso con el rol incluido
+        additional_claims = {'rol': admin_user.rol.value}
+        access_token = create_access_token(identity=str(admin_user.id), additional_claims=additional_claims)
         refresh_token = create_refresh_token(identity=str(admin_user.id))
         
         return jsonify({
@@ -402,8 +406,9 @@ def force_admin_login():
         db.session.add(admin_user)
         db.session.commit()
         
-        # Crear token de acceso
-        access_token = create_access_token(identity=str(admin_user.id))
+        # Crear token de acceso con el rol incluido
+        additional_claims = {'rol': admin_user.rol.value}
+        access_token = create_access_token(identity=str(admin_user.id), additional_claims=additional_claims)
         refresh_token = create_refresh_token(identity=str(admin_user.id))
         
         return jsonify({

@@ -34,7 +34,7 @@ class Service(BaseModel):
     # reservas se acceden via Reservation.query.filter_by(service_id=...)
     barberos = db.relationship('Barber', secondary=barber_services, back_populates='servicios')
     
-    def __init__(self, nombre, precio, duracion, descripcion=None, categoria=None, activo=True, imagen_url=None):
+    def __init__(self, nombre, precio, duracion, descripcion=None, categoria=None, activo=True, popular=False, imagen_url=None):
         super().__init__()
         self.nombre = nombre
         self.precio = precio
@@ -42,20 +42,28 @@ class Service(BaseModel):
         self.descripcion = descripcion
         self.categoria = categoria
         self.activo = activo
+        self.popular = popular
         self.imagen_url = imagen_url
     
     def to_dict(self):
-        """Convierte el servicio a diccionario"""
+        """Convierte el servicio a diccionario con mapeo para frontend"""
         data = super().to_dict()
         data.update({
             'nombre': self.nombre,
+            'name': self.nombre,  # Alias para frontend
             'descripcion': self.descripcion,
+            'description': self.descripcion,  # Alias para frontend
             'precio': float(self.precio) if self.precio else 0,
+            'price': float(self.precio) if self.precio else 0,  # Alias para frontend
             'duracion': self.duracion,
+            'duration': self.duracion,  # Alias para frontend
             'activo': self.activo,
+            'status': 'active' if self.activo else 'inactive',  # Mapeo para frontend
             'popular': self.popular,
             'categoria': self.categoria,
+            'category': self.categoria,  # Alias para frontend
             'imagen_url': self.imagen_url,
+            'image': self.imagen_url,  # Alias para frontend
             'barberos_count': len(self.barberos) if self.barberos else 0
         })
         return data

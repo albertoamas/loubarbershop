@@ -178,28 +178,6 @@
               </div>
             </div>
             <div class="px-6 pb-6">
-              <!-- Selector de hora -->
-              <div class="relative">
-                <select
-                  v-model="selectedTime"
-                  class="w-full px-4 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl text-gray-700 font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 hover:border-gray-200"
-                  :disabled="!selectedBarber || !selectedService || !selectedDate"
-                >
-                  <option value="">
-                    {{ !selectedBarber || !selectedService || !selectedDate 
-                       ? 'Selecciona barbero, servicio y fecha primero' 
-                       : 'Selecciona una hora' }}
-                  </option>
-                  <option v-for="time in availableTimes" :key="time" :value="time">
-                    {{ time }}
-                  </option>
-                </select>
-                <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                  <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                  </svg>
-                </div>
-              </div>
               <!-- Calendario -->
               <div class="bg-gray-50 rounded-xl p-6 mb-6 border border-gray-100">
                 <div class="flex items-center justify-between mb-6">
@@ -240,6 +218,29 @@
                   >
                     {{ date }}
                   </button>
+                </div>
+              </div>
+              
+              <!-- Selector de hora -->
+              <div class="relative mb-4">
+                <select
+                  v-model="selectedTime"
+                  class="w-full px-4 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl text-gray-700 font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 hover:border-gray-200"
+                  :disabled="!selectedBarber || !selectedService || !selectedDate"
+                >
+                  <option value="">
+                    {{ !selectedBarber || !selectedService || !selectedDate 
+                       ? 'Selecciona barbero, servicio y fecha primero' 
+                       : 'Selecciona una hora' }}
+                  </option>
+                  <option v-for="time in availableTimes" :key="time" :value="time">
+                    {{ time }}
+                  </option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                  <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
                 </div>
               </div>
               

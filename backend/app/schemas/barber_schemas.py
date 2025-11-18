@@ -13,6 +13,8 @@ class BarberCreateSchema(Schema):
     password = fields.Str(required=True, validate=validate.Length(min=6))
     password_confirmation = fields.Str(required=True)
     especialidad = fields.Str(required=True, validate=validate.Length(min=5, max=200))
+    descripcion = fields.Str(required=False)
+    experiencia_anos = fields.Int(required=False, missing=0)
     disponible = fields.Bool(required=False, missing=True)
     
     @validates('email')
@@ -29,17 +31,23 @@ class BarberUpdateSchema(Schema):
     nombre = fields.Str(required=False, validate=validate.Length(min=2, max=100))
     telefono = fields.Str(required=False, validate=validate.Length(max=20))
     especialidad = fields.Str(required=False, validate=validate.Length(min=5, max=200))
+    descripcion = fields.Str(required=False)
+    experiencia_anos = fields.Int(required=False)
     disponible = fields.Bool(required=False)
     activo = fields.Bool(required=False)
+    horario_trabajo = fields.Dict(required=False)
 
 class BarberResponseSchema(Schema):
     """Schema para respuesta de barbero"""
     id = fields.Str(dump_only=True)
     nombre = fields.Str(dump_only=True)  # Nombre del barbero directamente
     especialidad = fields.Str(dump_only=True)
+    descripcion = fields.Str(dump_only=True)
+    experiencia_anos = fields.Int(dump_only=True)
     disponible = fields.Bool(dump_only=True)
     activo = fields.Bool(dump_only=True)  # Campo activo faltante
     user_id = fields.Str(dump_only=True)
+    horario_trabajo = fields.Dict(dump_only=True)
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
     

@@ -23,10 +23,24 @@ services_bp = Blueprint('services', __name__, url_prefix='/api/services')
 
 @services_bp.route('', methods=['GET'])
 def get_services():
-    """Obtener todos los servicios activos"""
+    """Obtener todos los servicios (activos e inactivos para admin, solo activos para clientes)"""
     try:
-        # Solo servicios activos para usuarios normales
-        services = Service.query.filter_by(activo=True).all()
+        # Verificar si el usuario es administrador
+        from flask_jwt_extended import verify_jwt_in_request, get_jwt
+        
+        is_admin = False
+        try:
+            verify_jwt_in_request(optional=True)
+            claims = get_jwt()
+            is_admin = claims.get('rol') == 'admin' if claims else False
+        except:
+            is_admin = False
+        
+        # Admins ven todos los servicios, usuarios públicos solo activos
+        if is_admin:
+            services = Service.query.all()
+        else:
+            services = Service.query.filter_by(activo=True).all()
         
         return jsonify({
             'message': 'Servicios obtenidos exitosamente',

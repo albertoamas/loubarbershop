@@ -102,51 +102,137 @@
       </div>
     </div>
 
-    <!-- Filtros modernos con Tailwind v4 -->
-    <div class="bg-white border border-slate-200 rounded-2xl p-6 mb-8">
-      <div class="flex flex-wrap items-center gap-4">
-        <select 
-          v-model="filters.category"
-          class="px-4 py-2.5 border border-slate-200 rounded-xl text-sm bg-white text-slate-700 min-w-40 focus:ring-2 focus:ring-black focus:border-black transition-all duration-200"
-          @change="applyFilters"
-        >
-          <option value="">Todas las categorías</option>
-          <option value="cortes">Cortes</option>
-          <option value="barbas">Barbas</option>
-          <option value="tratamientos">Tratamientos</option>
-          <option value="combos">Combos</option>
-        </select>
+    <!-- Filtros modernizados -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 mb-6">
+      <div class="flex flex-col gap-4">
+        <!-- Fila 1: Búsqueda -->
+        <div class="flex flex-col sm:flex-row gap-4 items-stretch">
+          <div class="flex-1 relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input
+              v-model="filters.search"
+              type="text"
+              placeholder="Buscar por nombre o descripción del servicio..."
+              class="w-full pl-12 pr-4 py-3.5 border border-gray-300 rounded-xl bg-white text-sm font-medium focus:outline-none focus:border-violet-500 transition-all duration-200"
+            />
+            <button 
+              v-if="filters.search"
+              @click="filters.search = ''"
+              class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <button 
+            @click="clearFilters"
+            class="px-6 py-3.5 bg-gray-100 text-gray-700 border border-gray-300 rounded-xl font-medium text-sm hover:bg-gray-200 transition-all duration-200 whitespace-nowrap"
+          >
+            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Limpiar
+          </button>
+        </div>
 
-        <select 
-          v-model="filters.status"
-          class="px-4 py-2.5 border border-slate-200 rounded-xl text-sm bg-white text-slate-700 min-w-40 focus:ring-2 focus:ring-black focus:border-black transition-all duration-200"
-          @change="applyFilters"
-        >
-          <option value="">Todos los estados</option>
-          <option value="active">Activos</option>
-          <option value="inactive">Inactivos</option>
-        </select>
+        <!-- Fila 2: Filtros -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Filtro por Categoría -->
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">Categoría</label>
+            <select 
+              v-model="filters.category"
+              class="w-full px-4 py-3.5 border border-gray-300 rounded-xl bg-white text-sm font-medium focus:outline-none focus:border-violet-500 transition-all duration-200"
+              @change="applyFilters"
+            >
+              <option value="">Todas las categorías</option>
+              <option value="cortes">Cortes</option>
+              <option value="barbas">Barbas</option>
+              <option value="tratamientos">Tratamientos</option>
+              <option value="combos">Combos</option>
+            </select>
+          </div>
 
-        <select 
-          v-model="filters.priceRange"
-          class="px-4 py-2.5 border border-slate-200 rounded-xl text-sm bg-white text-slate-700 min-w-40 focus:ring-2 focus:ring-black focus:border-black transition-all duration-200"
-          @change="applyFilters"
-        >
-          <option value="">Todos los precios</option>
-          <option value="0-30000">Bs 0 - Bs 30,000</option>
-          <option value="30000-50000">Bs 30,000 - Bs 50,000</option>
-          <option value="50000-100000">Bs 50,000+</option>
-        </select>
+          <!-- Filtro por Estado -->
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">Estado</label>
+            <select 
+              v-model="filters.status"
+              class="w-full px-4 py-3.5 border border-gray-300 rounded-xl bg-white text-sm font-medium focus:outline-none focus:border-violet-500 transition-all duration-200"
+              @change="applyFilters"
+            >
+              <option value="">Todos los estados</option>
+              <option value="active">Activos</option>
+              <option value="inactive">Inactivos</option>
+            </select>
+          </div>
 
-        <button 
-          @click="clearFilters"
-          class="flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200 rounded-xl text-sm transition-all duration-200"
-        >
-          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-          Limpiar
-        </button>
+          <!-- Filtro por Rango de Precio -->
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">Rango de Precio</label>
+            <select 
+              v-model="filters.priceRange"
+              class="w-full px-4 py-3.5 border border-gray-300 rounded-xl bg-white text-sm font-medium focus:outline-none focus:border-violet-500 transition-all duration-200"
+              @change="applyFilters"
+            >
+              <option value="">Todos los precios</option>
+              <option value="0-30000">Bs 0 - Bs 30,000</option>
+              <option value="30000-50000">Bs 30,000 - Bs 50,000</option>
+              <option value="50000-100000">Bs 50,000+</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Indicadores de filtros activos -->
+        <div v-if="hasActiveFilters" class="flex flex-wrap gap-2 items-center pt-2 border-t border-gray-200">
+          <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Filtros activos:</span>
+          
+          <span v-if="filters.search" class="inline-flex items-center gap-1 px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-xs font-medium">
+            Búsqueda: "{{ filters.search }}"
+            <button @click="filters.search = ''" class="hover:text-violet-900">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </span>
+          
+          <span v-if="filters.category" class="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+            Categoría: {{ getCategoryLabel(filters.category) }}
+            <button @click="filters.category = ''; applyFilters()" class="hover:text-blue-900">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </span>
+          
+          <span v-if="filters.status" class="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+            Estado: {{ getStatusLabel(filters.status) }}
+            <button @click="filters.status = ''; applyFilters()" class="hover:text-green-900">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </span>
+          
+          <span v-if="filters.priceRange" class="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">
+            Precio: {{ getPriceRangeLabel(filters.priceRange) }}
+            <button @click="filters.priceRange = ''; applyFilters()" class="hover:text-orange-900">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </span>
+
+          <span class="text-xs text-gray-500 ml-auto">
+            {{ filteredServices.length }} resultado{{ filteredServices.length !== 1 ? 's' : '' }}
+          </span>
+        </div>
       </div>
     </div>
 
@@ -217,28 +303,38 @@
             <!-- Acciones -->
             <div class="flex gap-2 pt-4 border-t border-slate-100">
               <button 
+                @click.stop="viewService(service)" 
+                class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium border rounded-lg transition-all duration-200 bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 hover:border-blue-300"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+                Ver
+              </button>
+              
+              <button 
                 @click.stop="editService(service)" 
-                class="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-lg text-sm font-medium transition-all duration-200"
+                class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium border rounded-lg transition-all duration-200 bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 hover:border-amber-300"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
                 Editar
               </button>
+              
               <button 
                 @click.stop="toggleServiceStatus(service)" 
                 :class="[
-                  'flex-1 flex items-center justify-center gap-2 px-3 py-2 border rounded-lg text-sm font-medium transition-all duration-200',
+                  'flex items-center gap-1.5 px-3 py-2 text-xs font-medium border rounded-lg transition-all duration-200',
                   service.status === 'active' 
-                    ? 'bg-red-50 hover:bg-red-100 text-red-600 border-red-200' 
-                    : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border-emerald-200'
+                    ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100 hover:border-red-300' 
+                    : 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100 hover:border-green-300'
                 ]"
               >
-                <svg v-if="service.status === 'active'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path v-if="service.status === 'active'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                  <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 {{ service.status === 'active' ? 'Desactivar' : 'Activar' }}
               </button>
@@ -261,7 +357,7 @@
       </div>
 
       <div v-if="loading" class="flex flex-col justify-center items-center min-h-96 bg-slate-50 border border-slate-200 rounded-2xl">
-        <div class="w-12 h-12 border-3 border-slate-300 border-t-violet-500 rounded-full animate-spin mb-6"></div>
+        <div class="w-12 h-12 border-[3px] border-slate-300 border-t-violet-500 rounded-full animate-spin mb-6"></div>
         <p class="text-slate-600 font-medium">Cargando servicios...</p>
       </div>
     </div>
@@ -337,165 +433,266 @@
       </div>
     </div>
 
-    <!-- Modal de creación/edición modernizado -->
-    <AdminModal
-      :show="showServiceModal"
-      :title="editingService ? 'Editar Servicio' : 'Crear Servicio'"
-      @close="closeServiceModal"
-      showActions
-    >
-      <form @submit.prevent="saveService" class="space-y-6">
-        <div class="space-y-6">
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Nombre del servicio *</label>
-            <input
-              v-model="serviceForm.name"
-              type="text"
-              required
-              class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
-              placeholder="Ej: Corte Clásico"
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Descripción</label>
-            <textarea
-              v-model="serviceForm.description"
-              rows="3"
-              class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm resize-none transition-all duration-200"
-              placeholder="Descripción del servicio..."
-            ></textarea>
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Categoría *</label>
-            <select
-              v-model="serviceForm.category"
-              required
-              class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
-            >
-              <option value="">Seleccionar categoría</option>
-              <option value="cortes">Cortes</option>
-              <option value="barbas">Barbas</option>
-              <option value="tratamientos">Tratamientos</option>
-              <option value="combos">Combos</option>
-            </select>
-          </div>
-
-          <div class="grid grid-cols-2 gap-6">
-            <div>
-              <label class="block text-sm font-semibold text-slate-700 mb-2">Precio *</label>
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <span class="text-slate-500 text-sm font-medium">Bs</span>
+    <!-- Modal para Ver Servicio -->
+    <div v-if="showViewModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center px-8 py-6 border-b border-gray-200">
+          <h2 class="text-xl font-semibold text-gray-900">Detalles del Servicio</h2>
+          <button @click="closeViewModal" class="p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-all duration-200">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <div class="p-8" v-if="currentService">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Imagen del servicio -->
+            <div class="space-y-4">
+              <img 
+                :src="currentService.image || getDefaultServiceImage(currentService.category)"
+                :alt="currentService.name"
+                class="w-full h-48 object-cover rounded-xl border border-slate-200"
+              />
+              <div class="flex items-center gap-2">
+                <span 
+                  :class="[
+                    'px-3 py-1 rounded-full text-xs font-semibold',
+                    getCategoryBadgeClass(currentService.category)
+                  ]"
+                >
+                  {{ getCategoryLabel(currentService.category) }}
+                </span>
+                <span 
+                  :class="[
+                    'px-3 py-1 rounded-full text-xs font-semibold border',
+                    currentService.status === 'active' 
+                      ? 'bg-green-50 text-green-700 border-green-200' 
+                      : 'bg-red-50 text-red-700 border-red-200'
+                  ]"
+                >
+                  {{ getStatusLabel(currentService.status) }}
+                </span>
+              </div>
+            </div>
+            
+            <!-- Detalles del servicio -->
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Nombre</label>
+                <p class="text-base font-semibold text-gray-900">{{ currentService.name }}</p>
+              </div>
+              
+              <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Descripción</label>
+                <p class="text-sm text-gray-700">{{ currentService.description || 'Sin descripción' }}</p>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Precio</label>
+                  <p class="text-lg font-bold text-purple-600">Bs {{ formatPrice(currentService.price) }}</p>
                 </div>
+                
+                <div>
+                  <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Duración</label>
+                  <p class="text-lg font-bold text-blue-600">{{ currentService.duration }} min</p>
+                </div>
+              </div>
+              
+              <div v-if="currentService.created_at">
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Fecha de creación</label>
+                <p class="text-sm text-gray-700">{{ new Date(currentService.created_at).toLocaleDateString('es-ES') }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex justify-end gap-3 px-8 py-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+          <button @click="closeViewModal" class="px-6 py-3 bg-white text-gray-600 border border-gray-300 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+            Cerrar
+          </button>
+          <button @click="editServiceFromView" class="px-6 py-3 bg-amber-50 text-amber-700 border border-amber-200 rounded-xl font-medium hover:bg-amber-100 hover:border-amber-300 transition-all duration-200">
+            Editar Servicio
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de creación/edición modernizado -->
+    <div v-if="showServiceModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center px-8 py-6 border-b border-gray-200">
+          <h2 class="text-xl font-semibold text-gray-900">{{ editingService ? 'Editar Servicio' : 'Crear Servicio' }}</h2>
+          <button @click="closeServiceModal" class="p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-all duration-200">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <form @submit.prevent="saveService" class="p-8">
+          <div class="space-y-6">
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Nombre del servicio *</label>
+              <input
+                v-model="serviceForm.name"
+                type="text"
+                required
+                class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
+                placeholder="Ej: Corte Clásico"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Descripción</label>
+              <textarea
+                v-model="serviceForm.description"
+                rows="3"
+                class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm resize-none transition-all duration-200"
+                placeholder="Descripción del servicio..."
+              ></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Categoría *</label>
+              <select
+                v-model="serviceForm.category"
+                required
+                class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
+              >
+                <option value="">Seleccionar categoría</option>
+                <option value="cortes">Cortes</option>
+                <option value="barbas">Barbas</option>
+                <option value="tratamientos">Tratamientos</option>
+                <option value="combos">Combos</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Precio *</label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <span class="text-slate-500 text-sm font-medium">Bs</span>
+                  </div>
+                  <input
+                    v-model="serviceForm.price"
+                    type="number"
+                    required
+                    min="0"
+                    step="1"
+                    class="w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
+                    placeholder="40"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Duración (min) *</label>
                 <input
-                  v-model="serviceForm.price"
+                  v-model="serviceForm.duration"
                   type="number"
                   required
-                  min="0"
-                  step="1000"
-                  class="w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
-                  placeholder="30000"
+                  min="5"
+                  max="240"
+                  step="5"
+                  class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
+                  placeholder="45"
                 />
               </div>
             </div>
 
             <div>
-              <label class="block text-sm font-semibold text-slate-700 mb-2">Duración (min) *</label>
-              <input
-                v-model="serviceForm.duration"
-                type="number"
-                required
-                min="15"
-                max="240"
-                step="15"
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Estado</label>
+              <select
+                v-model="serviceForm.status"
                 class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
-                placeholder="45"
-              />
+              >
+                <option value="active">Activo</option>
+                <option value="inactive">Inactivo</option>
+              </select>
             </div>
           </div>
 
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Estado</label>
-            <select
-              v-model="serviceForm.status"
-              class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
+          <div class="flex justify-end gap-3 pt-6 border-t border-gray-200 bg-gray-50 -mx-8 -mb-8 px-8 py-6 rounded-b-2xl mt-8">
+            <button 
+              type="button" 
+              @click="closeServiceModal" 
+              class="px-6 py-3 bg-white text-gray-600 border border-gray-300 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
             >
-              <option value="active">Activo</option>
-              <option value="inactive">Inactivo</option>
-            </select>
+              Cancelar
+            </button>
+            <button 
+              type="submit" 
+              class="px-6 py-3 bg-black text-white border-0 rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-800" 
+              :disabled="saving"
+            >
+              {{ editingService ? 'Actualizar' : 'Crear' }} Servicio
+            </button>
           </div>
-        </div>
-
-        <div class="flex justify-end gap-4 pt-6 border-t border-slate-200">
-          <button 
-            type="button" 
-            @click="closeServiceModal" 
-            class="px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl font-semibold text-sm transition-all duration-200"
-          >
-            Cancelar
-          </button>
-          <button 
-            type="submit" 
-            class="px-6 py-3 bg-black hover:bg-slate-800 text-white rounded-xl font-semibold text-sm transition-all duration-200 disabled:opacity-50" 
-            :disabled="saving"
-          >
-            {{ editingService ? 'Actualizar' : 'Crear' }} Servicio
-          </button>
-        </div>
-      </form>
-    </AdminModal>
+        </form>
+      </div>
+    </div>
 
     <!-- Modal de cambio de categoría masivo modernizado -->
-    <AdminModal
-      :show="showBulkCategoryModal"
-      title="Cambiar Categoría Masiva"
-      @close="closeBulkCategoryModal"
-      showActions
-    >
-      <form @submit.prevent="confirmBulkCategoryChange" class="space-y-6">
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-2">Nueva categoría</label>
-          <select
-            v-model="bulkCategoryForm.newCategory"
-            required
-            class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
-          >
-            <option value="cortes">Cortes</option>
-            <option value="barbas">Barbas</option>
-            <option value="tratamientos">Tratamientos</option>
-            <option value="combos">Combos</option>
-          </select>
-        </div>
-        <div class="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-xl text-sm font-medium">
-          Se cambiará la categoría de {{ selectedServices.length }} servicio(s) seleccionado(s).
-        </div>
-        <div class="flex justify-end gap-4">
-          <button 
-            type="button" 
-            @click="closeBulkCategoryModal" 
-            class="px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl font-semibold text-sm transition-all duration-200"
-          >
-            Cancelar
-          </button>
-          <button 
-            type="submit" 
-            class="px-6 py-3 bg-black hover:bg-slate-800 text-white rounded-xl font-semibold text-sm transition-all duration-200 disabled:opacity-50" 
-            :disabled="saving"
-          >
-            Cambiar Categoría
+    <div v-if="showBulkCategoryModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+        <div class="flex justify-between items-center px-8 py-6 border-b border-gray-200">
+          <h2 class="text-xl font-semibold text-gray-900">Cambiar Categoría Masiva</h2>
+          <button @click="closeBulkCategoryModal" class="p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-all duration-200">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
-      </form>
-    </AdminModal>
+        
+        <form @submit.prevent="confirmBulkCategoryChange" class="p-8">
+          <div class="space-y-6">
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2">Nueva categoría</label>
+              <select
+                v-model="bulkCategoryForm.newCategory"
+                required
+                class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-black focus:border-black text-sm transition-all duration-200"
+              >
+                <option value="">Seleccionar categoría</option>
+                <option value="cortes">Cortes</option>
+                <option value="barbas">Barbas</option>
+                <option value="tratamientos">Tratamientos</option>
+                <option value="combos">Combos</option>
+              </select>
+            </div>
+            
+            <div class="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-xl text-sm font-medium">
+              Se cambiará la categoría de {{ selectedServices.length }} servicio(s) seleccionado(s).
+            </div>
+          </div>
+          
+          <div class="flex justify-end gap-3 pt-6 border-t border-gray-200 bg-gray-50 -mx-8 -mb-8 px-8 py-6 rounded-b-2xl mt-8">
+            <button 
+              type="button" 
+              @click="closeBulkCategoryModal" 
+              class="px-6 py-3 bg-white text-gray-600 border border-gray-300 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
+            >
+              Cancelar
+            </button>
+            <button 
+              type="submit" 
+              class="px-6 py-3 bg-black text-white border-0 rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-800" 
+              :disabled="saving"
+            >
+              Cambiar Categoría
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import AdminTable from '@/components/admin/AdminTable.vue'
-import AdminModal from '@/components/admin/AdminModal.vue'
 import serviceService from '@/services/serviceService'
 
 // Estados reactivos
@@ -517,6 +714,7 @@ const itemsPerPage = ref(10)
 
 // Modales
 const showServiceModal = ref(false)
+const showViewModal = ref(false)
 const showBulkCategoryModal = ref(false)
 
 // Selección múltiple
@@ -524,6 +722,7 @@ const selectedServices = ref([])
 
 // Formularios
 const editingService = ref(null)
+const currentService = ref(null)
 const serviceForm = ref({
   name: '',
   description: '',
@@ -537,9 +736,9 @@ const bulkCategoryForm = ref({
   newCategory: ''
 })
 
-// Computadas para estadísticas
+// Computadas para estadísticas (siempre usa todos los servicios, no filtrados)
 const stats = computed(() => ({
-  totalServices: filteredServices.value.length,
+  totalServices: services.value.length,
   activeServices: services.value.filter(s => s.status === 'active').length,
   mostPopular: services.value.length > 0 
     ? services.value.reduce((prev, current) => 
@@ -634,14 +833,17 @@ const tableConfig = computed(() => ({
   selected: selectedServices.value
 }))
 
+// Computed para filtros activos
+const hasActiveFilters = computed(() => {
+  return !!(filters.value.search || filters.value.category || filters.value.status || filters.value.priceRange)
+})
+
 // Métodos
 const loadServices = async () => {
   loading.value = true
   try {
     const servicesData = await serviceService.getAll()
     services.value = servicesData || []
-    console.log('Servicios cargados:', services.value.length)
-    console.log('Primer servicio para debug:', services.value[0])
   } catch (error) {
     console.error('Error al cargar servicios:', error)
     services.value = []
@@ -663,9 +865,48 @@ const openCreateModal = () => {
   showServiceModal.value = true
 }
 
+const viewService = (service) => {
+  currentService.value = service
+  showViewModal.value = true
+}
+
+const closeViewModal = () => {
+  showViewModal.value = false
+  currentService.value = null
+}
+
+const editServiceFromView = () => {
+  if (currentService.value) {
+    editingService.value = currentService.value
+    // Copiar datos asegurando que los tipos sean correctos
+    serviceForm.value = {
+      name: currentService.value.name || '',
+      description: currentService.value.description || '',
+      category: currentService.value.category || '',
+      price: currentService.value.price || '',
+      duration: currentService.value.duration || '',
+      status: currentService.value.status || 'active',
+      popular: currentService.value.popular || false,
+      image: currentService.value.image || ''
+    }
+    showViewModal.value = false
+    showServiceModal.value = true
+  }
+}
+
 const editService = (service) => {
   editingService.value = service
-  serviceForm.value = { ...service }
+  // Copiar datos asegurando que los tipos sean correctos
+  serviceForm.value = {
+    name: service.name || '',
+    description: service.description || '',
+    category: service.category || '',
+    price: service.price || '',
+    duration: service.duration || '',
+    status: service.status || 'active',
+    popular: service.popular || false,
+    image: service.image || ''
+  }
   showServiceModal.value = true
 }
 
@@ -679,22 +920,20 @@ const saveService = async () => {
   try {
     if (editingService.value) {
       // Actualizar servicio existente
-      const updatedService = await serviceService.update(editingService.value.id, serviceForm.value)
-      const index = services.value.findIndex(s => s.id === editingService.value.id)
-      if (index !== -1) {
-        services.value[index] = updatedService
-      }
-      console.log('Servicio actualizado correctamente')
+      await serviceService.update(editingService.value.id, serviceForm.value)
+      // Recargar servicios después de actualizar para obtener datos frescos del backend
+      await loadServices()
     } else {
       // Crear nuevo servicio
-      const newService = await serviceService.create(serviceForm.value)
-      services.value.unshift(newService)
-      console.log('Servicio creado correctamente')
+      await serviceService.create(serviceForm.value)
+      // Recargar servicios después de crear
+      await loadServices()
     }
     
     closeServiceModal()
   } catch (error) {
     console.error('Error al guardar servicio:', error)
+    alert('Error al guardar el servicio. Verifica los datos e intenta nuevamente.')
   } finally {
     saving.value = false
   }
@@ -705,15 +944,16 @@ const toggleServiceStatus = async (service) => {
     const newStatus = service.status === 'active' ? 'inactive' : 'active'
     await serviceService.update(service.id, { status: newStatus })
     
+    // Actualizar el servicio en la lista local
     const index = services.value.findIndex(s => s.id === service.id)
     if (index !== -1) {
       services.value[index].status = newStatus
+      // Forzar actualización de la vista
+      services.value = [...services.value]
     }
-    
-    const statusText = newStatus === 'active' ? 'activado' : 'desactivado'
-    console.log(`Servicio ${statusText} correctamente`)
   } catch (error) {
     console.error('Error al cambiar estado del servicio:', error)
+    alert('Error al cambiar el estado del servicio. Por favor intenta nuevamente.')
   }
 }
 
@@ -730,7 +970,6 @@ const bulkActivate = async () => {
       }
     }
     
-    console.log(`${selectedServices.value.length} servicios activados`)
     selectedServices.value = []
   } catch (error) {
     console.error('Error al activar servicios:', error)
@@ -749,7 +988,6 @@ const bulkDeactivate = async () => {
       }
     }
     
-    console.log(`${selectedServices.value.length} servicios desactivados`)
     selectedServices.value = []
   } catch (error) {
     console.error('Error al desactivar servicios:', error)
@@ -780,7 +1018,6 @@ const confirmBulkCategoryChange = async () => {
       }
     }
     
-    console.log(`Categoría actualizada para ${selectedServices.value.length} servicios`)
     selectedServices.value = []
     closeBulkCategoryModal()
   } catch (error) {
@@ -839,6 +1076,15 @@ const getStatusLabel = (status) => {
   return status === 'active' ? 'Activo' : 'Inactivo'
 }
 
+const getPriceRangeLabel = (range) => {
+  const labels = {
+    '0-30000': 'Bs 0 - Bs 30,000',
+    '30000-50000': 'Bs 30,000 - Bs 50,000',
+    '50000-100000': 'Bs 50,000+'
+  }
+  return labels[range] || range
+}
+
 const getDefaultServiceImage = (category) => {
   const images = {
     cortes: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=60&h=60&fit=crop',
@@ -864,7 +1110,6 @@ const applyFilters = () => {
 
 const selectService = (service) => {
   // Función para seleccionar servicios (puede expandirse para funcionalidad adicional)
-  console.log('Servicio seleccionado:', service.name)
 }
 
 // Observadores
@@ -879,27 +1124,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Utilidades adicionales para Tailwind v4 */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Animación de spin personalizada */
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-/* Border width 3 para loading spinner */
-.border-3 {
-  border-width: 3px;
-}
+/* AdminServicios.vue - Tailwind CSS v4 */
+/* Todas las utilidades son nativas de Tailwind v4 */
+/* No se requiere CSS custom - 100% utility-first */
 </style>

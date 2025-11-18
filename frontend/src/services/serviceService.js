@@ -13,23 +13,15 @@ export const serviceService = {
   async getAll() {
     try {
       const response = await apiClient.get('/api/services')
-      console.log('Respuesta completa del backend:', response.data)
       
-      // El backend puede devolver diferentes formatos:
-      // 1. { services: [...], total: number, message: string }
-      // 2. { data: [...] }
-      // 3. [...] (array directo)
-      
+      // El backend devuelve: { services: [...], total: number, message: string }
       let services = []
       
       if (response.data.services && Array.isArray(response.data.services)) {
-        // Formato: { services: [...], total: number, message: string }
         services = response.data.services
       } else if (response.data.data && Array.isArray(response.data.data)) {
-        // Formato: { data: [...] }
         services = response.data.data
       } else if (Array.isArray(response.data)) {
-        // Formato: [...] (array directo)
         services = response.data
       } else {
         console.warn('Formato de respuesta no reconocido:', response.data)
@@ -53,17 +45,18 @@ export const serviceService = {
 
         return {
           id: service.id,
-          name: service.nombre || service.name,
-          description: service.descripcion || service.description,
-          category: inferCategory(service.nombre || service.name, service.categoria || service.category),
-          price: service.precio || service.price,
-          duration: service.duracion || service.duration,
-          status: service.estado === 'activo' ? 'active' : (service.status || 'active'),
-          image: service.imagen || service.image,
+          name: service.name || service.nombre,
+          description: service.description || service.descripcion || '',
+          category: service.category || service.categoria || inferCategory(service.name || service.nombre),
+          price: parseFloat(service.price || service.precio || 0),
+          duration: parseInt(service.duration || service.duracion || 30),
+          status: service.status || (service.activo ? 'active' : 'inactive'),
+          image: service.image || service.imagen_url || '',
+          popular: service.popular || false,
           availableBarbers: service.barberos || service.availableBarbers || [],
-          order: service.orden || service.order || 1,
-          rating: service.calificacion || service.rating || 4.5,
-          bookingsCount: service.reservas || service.bookingsCount || 0
+          barberos_count: service.barberos_count || 0,
+          created_at: service.created_at,
+          updated_at: service.updated_at
         }
       })
       
@@ -101,20 +94,32 @@ export const serviceService = {
 
   /**
    * Crear nuevo servicio
-   * @param {Object} serviceData - datos del servicio
+   * @param {Object} serviceData - datos del servicio (formato frontend)
    * @returns {Promise}
    */
   async create(serviceData) {
     try {
-      const response = await apiClient.post('/api/services', serviceData)
+      // Mapear datos del frontend al formato del backend
+      const backendData = {
+        nombre: serviceData.name,
+        descripcion: serviceData.description || '',
+        precio: parseFloat(serviceData.price) || 0,
+        duracion: parseInt(serviceData.duration) || 30,
+        categoria: serviceData.category,
+        activo: serviceData.status === 'active',
+        popular: serviceData.popular || false,
+        imagen_url: serviceData.image || null
+      }
+      
+      const response = await apiClient.post('/api/services', backendData)
       return response.data
     } catch (error) {
-      console.log('Simulando creación de servicio:', serviceData.name)
-      return { 
-        success: true, 
-        id: Date.now().toString(), 
-        message: 'Servicio creado correctamente (simulado)' 
+      console.error('Error al crear servicio:', error)
+      if (error.response) {
+        console.error('Detalles del error:', error.response.data)
+        throw new Error(error.response.data.message || 'Error al crear el servicio')
       }
+      throw error
     }
   },
 
@@ -130,19 +135,44 @@ export const serviceService = {
   /**
    * Actualizar servicio
    * @param {string} id - ID del servicio
-   * @param {Object} data - datos a actualizar
+   * @param {Object} data - datos a actualizar (formato frontend)
    * @returns {Promise}
    */
   async update(id, data) {
     try {
-      const response = await apiClient.put(`/api/services/${id}`, data)
+      // Mapear datos del frontend al formato del backend
+      const backendData = {}
+      
+      if (data.name !== undefined) backendData.nombre = data.name
+      if (data.description !== undefined) backendData.descripcion = data.description
+      if (data.price !== undefined) {
+        // Asegurar que el precio sea un número válido
+        const price = parseFloat(data.price)
+        if (!isNaN(price) && price >= 0) {
+          backendData.precio = price
+        }
+      }
+      if (data.duration !== undefined) {
+        // Asegurar que la duración sea un número entero válido
+        const duration = parseInt(data.duration)
+        if (!isNaN(duration) && duration >= 5 && duration <= 300) {
+          backendData.duracion = duration
+        }
+      }
+      if (data.category !== undefined) backendData.categoria = data.category
+      if (data.status !== undefined) backendData.activo = data.status === 'active'
+      if (data.popular !== undefined) backendData.popular = data.popular
+      if (data.image !== undefined) backendData.imagen_url = data.image
+      
+      const response = await apiClient.put(`/api/services/${id}`, backendData)
       return response.data
     } catch (error) {
-      console.log(`Simulando actualización del servicio ${id}:`, data.name || 'Sin nombre')
-      return { 
-        success: true, 
-        message: 'Servicio actualizado correctamente (simulado)' 
+      console.error('Error al actualizar servicio:', error)
+      if (error.response) {
+        console.error('Detalles del error:', error.response.data)
+        throw new Error(error.response.data.message || 'Error al actualizar el servicio')
       }
+      throw error
     }
   },
 

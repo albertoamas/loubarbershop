@@ -331,6 +331,97 @@ def insert_initial_data(connection):
         
         print_success("Barbero asociado con servicios")
         
+        # Crear reservas de prueba
+        reservations_sql = """
+        INSERT INTO reservations (id, user_id, barber_id, service_id, fecha_reserva, hora_inicio, hora_fin, estado, cliente_nombre, cliente_email, cliente_telefono, notas)
+        VALUES (:id, :user_id, :barber_id, :service_id, :fecha_reserva, :hora_inicio, :hora_fin, :estado, :cliente_nombre, :cliente_email, :cliente_telefono, :notas)
+        """
+        
+        # Generar fechas para los próximos días
+        from datetime import datetime, timedelta
+        today = datetime.now().date()
+        
+        # Generar IDs para reservas
+        reservation_ids = [str(uuid.uuid4()) for _ in range(5)]
+        
+        reservations_data = [
+            {
+                'id': reservation_ids[0],
+                'user_id': admin_id,
+                'barber_id': barber_id,
+                'service_id': service_ids[0],  # Corte Clásico
+                'fecha_reserva': today + timedelta(days=1),
+                'hora_inicio': '10:00:00',
+                'hora_fin': '10:30:00',
+                'estado': 'confirmada',
+                'cliente_nombre': 'Carlos Mendez',
+                'cliente_email': 'carlos@example.com',
+                'cliente_telefono': '555-0101',
+                'notas': 'Cliente prefiere corte corto'
+            },
+            {
+                'id': reservation_ids[1],
+                'user_id': admin_id,
+                'barber_id': barber_id,
+                'service_id': service_ids[1],  # Corte y Barba
+                'fecha_reserva': today + timedelta(days=1),
+                'hora_inicio': '14:00:00',
+                'hora_fin': '15:00:00',
+                'estado': 'pendiente',
+                'cliente_nombre': 'Miguel Rodriguez',
+                'cliente_email': 'miguel@example.com',
+                'cliente_telefono': '555-0102',
+                'notas': 'Primera vez en el local'
+            },
+            {
+                'id': reservation_ids[2],
+                'user_id': admin_id,
+                'barber_id': barber_id,
+                'service_id': service_ids[2],  # Arreglo de Cejas
+                'fecha_reserva': today + timedelta(days=2),
+                'hora_inicio': '11:30:00',
+                'hora_fin': '12:00:00',
+                'estado': 'confirmada',
+                'cliente_nombre': 'Ana Martinez',
+                'cliente_email': 'ana@example.com',
+                'cliente_telefono': '555-0103',
+                'notas': 'Cliente regular'
+            },
+            {
+                'id': reservation_ids[3],
+                'user_id': admin_id,
+                'barber_id': barber_id,
+                'service_id': service_ids[0],  # Corte Clásico
+                'fecha_reserva': today,
+                'hora_inicio': '16:00:00',
+                'hora_fin': '16:30:00',
+                'estado': 'completada',
+                'cliente_nombre': 'Luis Herrera',
+                'cliente_email': 'luis@example.com',
+                'cliente_telefono': '555-0104',
+                'notas': 'Servicio completado satisfactoriamente'
+            },
+            {
+                'id': reservation_ids[4],
+                'user_id': admin_id,
+                'barber_id': barber_id,
+                'service_id': service_ids[1],  # Corte y Barba
+                'fecha_reserva': today + timedelta(days=3),
+                'hora_inicio': '09:00:00',
+                'hora_fin': '10:00:00',
+                'estado': 'confirmada',
+                'cliente_nombre': 'Pedro Gonzalez',
+                'cliente_email': 'pedro@example.com',
+                'cliente_telefono': '555-0105',
+                'notas': 'Cliente VIP'
+            }
+        ]
+        
+        for reservation in reservations_data:
+            connection.execute(text(reservations_sql), reservation)
+        
+        print_success("Reservas de prueba creadas")
+        
         connection.commit()
         return True
         

@@ -21,7 +21,7 @@
           <button 
             @click="loadUsers" 
             :disabled="loadingUsers"
-            class="flex items-center justify-center px-6 py-3 bg-gradient-to-r from-black to-gray-500 text-white border-none rounded-xl font-semibold text-sm cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+            class="flex items-center justify-center px-6 py-3 bg-gradient-to-r from-black to-gray-500 text-white border-0 rounded-xl font-semibold text-sm transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed"
           >
             <svg :class="{ 'animate-spin': loadingUsers }" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -29,7 +29,7 @@
             {{ loadingUsers ? 'Actualizando...' : 'Actualizar' }}
           </button>
           <button 
-            class="flex items-center justify-center px-6 py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white border-none rounded-xl font-semibold text-sm cursor-pointer transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+            class="flex items-center justify-center px-6 py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white border-0 rounded-xl font-semibold text-sm transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
             @click="openCreateModal"
           >
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -44,7 +44,7 @@
     <!-- Grid de estadísticas modernizado -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
       <!-- Total de usuarios -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all duration-300 hover:transform hover:-translate-y-1">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
         <div class="flex items-center justify-between">
           <div>
             <h3 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Total</h3>
@@ -59,7 +59,7 @@
       </div>
 
       <!-- Clientes -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all duration-300 hover:transform hover:-translate-y-1">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
         <div class="flex items-center justify-between">
           <div>
             <h3 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Clientes</h3>
@@ -74,7 +74,7 @@
       </div>
 
       <!-- Barberos -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all duration-300 hover:transform hover:-translate-y-1">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
         <div class="flex items-center justify-between">
           <div>
             <h3 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Barberos</h3>
@@ -89,7 +89,7 @@
       </div>
 
       <!-- Activos hoy -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all duration-300 hover:transform hover:-translate-y-1">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
         <div class="flex items-center justify-between">
           <div>
             <h3 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Activos</h3>
@@ -104,51 +104,128 @@
       </div>
     </div>
 
-    <!-- Filtros Compactos -->
-    <div class="bg-white rounded-xl p-6 mb-6 shadow-sm border border-slate-200">
-      <div class="flex flex-wrap gap-4 items-center max-lg:flex-col max-lg:items-stretch">
-        <select 
-          v-model="filters.role"
-          class="min-w-48 px-4 py-3 border border-slate-300 rounded-lg bg-white text-sm text-slate-700 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all max-lg:min-w-full"
-          @change="applyFilters"
-        >
-          <option value="">Todos los roles</option>
-          <option value="client">Clientes</option>
-          <option value="barber">Barberos</option>
-          <option value="admin">Administradores</option>
-        </select>
+    <!-- Filtros modernizados -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 mb-6">
+      <div class="flex flex-col gap-4">
+        <!-- Fila 1: Búsqueda -->
+        <div class="flex flex-col sm:flex-row gap-4 items-stretch">
+          <div class="flex-1 relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input
+              v-model="searchTerm"
+              type="text"
+              placeholder="Buscar por nombre, email o teléfono..."
+              class="w-full pl-12 pr-4 py-3.5 border border-gray-300 rounded-xl bg-white text-sm font-medium focus:outline-none focus:border-violet-500 transition-all duration-200"
+            />
+            <button 
+              v-if="searchTerm"
+              @click="searchTerm = ''"
+              class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <button 
+            @click="clearFilters"
+            class="px-6 py-3.5 bg-gray-100 text-gray-700 border border-gray-300 rounded-xl font-medium text-sm hover:bg-gray-200 transition-all duration-200 whitespace-nowrap"
+          >
+            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Limpiar
+          </button>
+        </div>
 
-        <select 
-          v-model="filters.status"
-          class="min-w-48 px-4 py-3 border border-slate-300 rounded-lg bg-white text-sm text-slate-700 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all max-lg:min-w-full"
-          @change="applyFilters"
-        >
-          <option value="">Todos los estados</option>
-          <option value="active">Activos</option>
-          <option value="inactive">Inactivos</option>
-          <option value="suspended">Suspendidos</option>
-        </select>
+        <!-- Fila 2: Filtros -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Filtro por Rol -->
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">Rol</label>
+            <select 
+              v-model="filters.role"
+              class="w-full px-4 py-3.5 border border-gray-300 rounded-xl bg-white text-sm font-medium focus:outline-none focus:border-violet-500 transition-all duration-200"
+              @change="applyFilters"
+            >
+              <option value="">Todos los roles</option>
+              <option value="client">Clientes</option>
+              <option value="barber">Barberos</option>
+              <option value="admin">Administradores</option>
+            </select>
+          </div>
 
-        <select 
-          v-model="filters.dateRange"
-          class="min-w-48 px-4 py-3 border border-slate-300 rounded-lg bg-white text-sm text-slate-700 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all max-lg:min-w-full"
-          @change="applyFilters"
-        >
-          <option value="">Cualquier fecha</option>
-          <option value="today">Hoy</option>
-          <option value="week">Esta semana</option>
-          <option value="month">Este mes</option>
-        </select>
+          <!-- Filtro por Estado -->
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">Estado</label>
+            <select 
+              v-model="filters.status"
+              class="w-full px-4 py-3.5 border border-gray-300 rounded-xl bg-white text-sm font-medium focus:outline-none focus:border-violet-500 transition-all duration-200"
+              @change="applyFilters"
+            >
+              <option value="">Todos los estados</option>
+              <option value="active">Activos</option>
+              <option value="inactive">Inactivos</option>
+            </select>
+          </div>
 
-        <button 
-          @click="clearFilters"
-          class="flex items-center gap-2 px-4 py-3 bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-sm font-medium hover:bg-slate-200 hover:text-slate-900 transition-all"
-        >
-          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-          Limpiar
-        </button>
+          <!-- Ordenar por -->
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wider">Ordenar por</label>
+            <select 
+              v-model="sortBy"
+              class="w-full px-4 py-3.5 border border-gray-300 rounded-xl bg-white text-sm font-medium focus:outline-none focus:border-violet-500 transition-all duration-200"
+            >
+              <option value="nombre_asc">Nombre (A-Z)</option>
+              <option value="nombre_desc">Nombre (Z-A)</option>
+              <option value="email_asc">Email (A-Z)</option>
+              <option value="email_desc">Email (Z-A)</option>
+              <option value="fecha_desc">Más recientes</option>
+              <option value="fecha_asc">Más antiguos</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Indicadores de filtros activos -->
+        <div v-if="hasActiveFilters" class="flex flex-wrap gap-2 items-center pt-2 border-t border-gray-200">
+          <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Filtros activos:</span>
+          
+          <span v-if="searchTerm" class="inline-flex items-center gap-1 px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-xs font-medium">
+            Búsqueda: {{ searchTerm }}
+            <button @click="searchTerm = ''" class="ml-1 hover:text-violet-900">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </span>
+          
+          <span v-if="filters.role" class="inline-flex items-center gap-1 px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-xs font-medium">
+            Rol: {{ getRoleFilterLabel(filters.role) }}
+            <button @click="filters.role = ''; applyFilters()" class="ml-1 hover:text-violet-900">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </span>
+          
+          <span v-if="filters.status" class="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+            Estado: {{ getStatusFilterLabel(filters.status) }}
+            <button @click="filters.status = ''; applyFilters()" class="ml-1 hover:text-blue-900">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </span>
+          
+          <span class="text-xs text-gray-500 ml-auto">
+            {{ filteredUsers.length }} resultado(s)
+          </span>
+        </div>
       </div>
     </div>
 
@@ -176,103 +253,100 @@
         </button>
       </div>
       
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+      <div v-else class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 p-6">
         <div
           v-for="user in paginatedUsers"
           :key="user.id"
-          class="group bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg hover:-translate-y-1 hover:border-violet-300 transition-all duration-300"
+          class="bg-slate-50 border border-slate-200 rounded-2xl p-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
         >
           <!-- Header del Usuario -->
-          <div class="p-6 pb-4 flex items-start gap-4">
-            <div class="flex-shrink-0 w-14 h-14">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="w-12 h-12 flex-shrink-0">
               <img
                 v-if="user.avatar"
                 :src="user.avatar"
                 :alt="user.name"
-                class="w-full h-full rounded-xl object-cover border-2 border-slate-200"
+                class="w-full h-full rounded-xl object-cover"
               />
-              <div v-else class="w-full h-full rounded-xl bg-gradient-to-br from-black to-slate-600 text-white flex items-center justify-center font-semibold text-lg">
+              <div v-else class="w-full h-full rounded-xl bg-gradient-to-br from-violet-500 to-violet-600 text-white flex items-center justify-center font-semibold text-sm">
                 {{ getInitials(user.name) }}
               </div>
             </div>
             
             <div class="flex-1 min-w-0">
-              <h3 class="text-lg font-bold text-slate-900 mb-1 truncate">{{ user.name }}</h3>
-              <p class="text-sm text-slate-600 mb-3 truncate">{{ user.email }}</p>
-              <span :class="getRoleBadgeClass(user.role)" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border">
+              <h3 class="font-semibold text-gray-900 text-base mb-1 truncate">{{ user.name }}</h3>
+              <p class="text-gray-500 text-sm mb-2 truncate">{{ user.email }}</p>
+              <span :class="getRoleBadgeClass(user.role)" class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border">
                 {{ getRoleLabel(user.role) }}
-              </span>
-            </div>
-            
-            <div class="flex-shrink-0">
-              <span :class="['inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium', getStatusClass(user.status)]">
-                <div class="w-2 h-2 rounded-full" :class="user.status === 'active' ? 'bg-emerald-500' : 'bg-red-500'"></div>
-                {{ getStatusLabel(user.status) }}
               </span>
             </div>
           </div>
           
           <!-- Detalles del Usuario -->
-          <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 space-y-3">
+          <div class="space-y-3 mb-4">
             <div class="flex justify-between items-center">
-              <span class="text-sm font-medium text-slate-600">Teléfono:</span>
-              <span class="text-sm text-slate-900 font-medium">
+              <span class="text-sm font-medium text-gray-600">Estado:</span>
+              <span :class="['inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold', getStatusClass(user.status)]">
+                <div class="w-2 h-2 rounded-full" :class="user.status === 'active' ? 'bg-emerald-500' : 'bg-red-500'"></div>
+                {{ getStatusLabel(user.status) }}
+              </span>
+            </div>
+            
+            <div class="flex justify-between items-center">
+              <span class="text-sm font-medium text-gray-600">Teléfono:</span>
+              <span class="text-sm text-gray-900 font-medium">
                 {{ user.phone || 'No registrado' }}
               </span>
             </div>
             
             <div class="flex justify-between items-center">
-              <span class="text-sm font-medium text-slate-600">Email:</span>
+              <span class="text-sm font-medium text-gray-600">Email verificado:</span>
               <div class="flex items-center gap-2">
-                <span class="text-sm text-slate-900 font-medium truncate max-w-24">{{ user.email }}</span>
                 <svg v-if="user.emailVerified" class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <svg v-else class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
+                <span class="text-sm text-gray-900 font-medium">{{ user.emailVerified ? 'Sí' : 'No' }}</span>
               </div>
             </div>
             
             <div class="flex justify-between items-center">
-              <span class="text-sm font-medium text-slate-600">Registrado:</span>
-              <span class="text-sm text-slate-900 font-medium">{{ formatDate(user.createdAt) }}</span>
+              <span class="text-sm font-medium text-gray-600">Registrado:</span>
+              <span class="text-sm text-gray-900 font-medium">{{ formatDate(user.createdAt) }}</span>
             </div>
           </div>
           
           <!-- Acciones del Usuario -->
-          <div class="p-4 bg-white border-t border-slate-200 flex gap-2">
-            <button @click="editUser(user)" class="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-lg hover:bg-amber-100 hover:border-amber-300 hover:-translate-y-0.5 transition-all">
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="flex gap-2 justify-end flex-wrap">
+            <button @click="viewUserDetails(user)" class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium border rounded-lg transition-all duration-200 bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 hover:border-blue-300">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+              </svg>
+              Ver
+            </button>
+            
+            <button @click="editUser(user)" class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium border rounded-lg transition-all duration-200 bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 hover:border-amber-300">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
               Editar
             </button>
             
-            <button 
-              @click="toggleUserStatus(user)" 
-              :class="user.status === 'active' 
-                ? 'flex-1 flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 hover:border-red-300 hover:-translate-y-0.5 transition-all'
-                : 'flex-1 flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 hover:border-emerald-300 hover:-translate-y-0.5 transition-all'"
-            >
-              <svg v-if="user.status === 'active'" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L5.636 5.636" />
+            <button v-if="user.status === 'active'" @click="toggleUserStatus(user)" class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium border rounded-lg transition-all duration-200 bg-red-50 text-red-700 border-red-200 hover:bg-red-100 hover:border-red-300">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
               </svg>
-              <svg v-else class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              {{ user.status === 'active' ? 'Desactivar' : 'Activar' }}
+              Desactivar
             </button>
             
-            <button 
-              @click="viewUserDetails(user)" 
-              class="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-violet-700 bg-violet-50 border border-violet-200 rounded-lg hover:bg-violet-100 hover:border-violet-300 hover:-translate-y-0.5 transition-all"
-            >
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            <button v-if="user.status === 'inactive'" @click="toggleUserStatus(user)" class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium border rounded-lg transition-all duration-200 bg-green-50 text-green-700 border-green-200 hover:bg-green-100 hover:border-green-300">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              Ver
+              Activar
             </button>
           </div>
         </div>
@@ -288,7 +362,7 @@
         <button 
           @click="previousPage"
           :disabled="currentPage === 1"
-          class="flex items-center justify-center w-10 h-10 rounded-lg border border-slate-300 bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-400 hover:-translate-y-0.5 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none transition-all"
+          class="flex items-center justify-center w-10 h-10 rounded-lg border border-slate-300 bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-400 hover:-translate-y-0.5 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -302,7 +376,7 @@
         <button 
           @click="nextPage"
           :disabled="currentPage >= totalPages"
-          class="flex items-center justify-center w-10 h-10 rounded-lg border border-slate-300 bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-400 hover:-translate-y-0.5 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none transition-all"
+          class="flex items-center justify-center w-10 h-10 rounded-lg border border-slate-300 bg-white text-slate-600 hover:bg-slate-50 hover:border-slate-400 hover:-translate-y-0.5 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -338,77 +412,241 @@
       </div>
     </div>
 
-    <!-- Modal de Creación/Edición de Usuario -->
-    <AdminModal
-      :show="showUserModal"
-      :title="editingUser ? 'Editar Usuario' : 'Crear Usuario'"
-      @close="closeUserModal"
-      showActions
-    >
-      <form @submit.prevent="saveUser" class="space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="md:col-span-2">
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Nombre completo *</label>
-            <input
-              v-model="userForm.name"
-              type="text"
-              required
-              class="w-full px-4 py-3 border border-slate-300 rounded-xl bg-white text-sm text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
-              placeholder="Nombre y apellido"
-            />
-          </div>
+    <!-- Modal para Ver Usuario (Solo Lectura) -->
+    <div v-if="showViewModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center px-8 py-6 border-b border-gray-200">
+          <h2 class="text-xl font-semibold text-gray-900">Detalles del Usuario</h2>
+          <button @click="closeViewModal" class="p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-all duration-200">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <div class="p-8" v-if="currentUser">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Información Personal -->
+            <div class="bg-slate-50 rounded-xl p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                Información Personal
+              </h3>
+              <div class="space-y-3">
+                <div>
+                  <span class="text-sm font-medium text-gray-600">Nombre:</span>
+                  <p class="text-sm text-gray-900 font-medium">{{ currentUser.name }}</p>
+                </div>
+                <div>
+                  <span class="text-sm font-medium text-gray-600">Email:</span>
+                  <p class="text-sm text-gray-900">{{ currentUser.email }}</p>
+                </div>
+                <div>
+                  <span class="text-sm font-medium text-gray-600">Teléfono:</span>
+                  <p class="text-sm text-gray-900">{{ currentUser.phone || 'No registrado' }}</p>
+                </div>
+              </div>
+            </div>
 
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Email *</label>
-            <input
-              v-model="userForm.email"
-              type="email"
-              required
-              class="w-full px-4 py-3 border border-slate-300 rounded-xl bg-white text-sm text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
-              placeholder="correo@ejemplo.com"
-            />
-          </div>
+            <!-- Información de Cuenta -->
+            <div class="bg-slate-50 rounded-xl p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                Información de Cuenta
+              </h3>
+              <div class="space-y-3">
+                <div>
+                  <span class="text-sm font-medium text-gray-600">Rol:</span>
+                  <p class="mt-1">
+                    <span :class="getRoleBadgeClass(currentUser.role)" class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border">
+                      {{ getRoleLabel(currentUser.role) }}
+                    </span>
+                  </p>
+                </div>
+                <div>
+                  <span class="text-sm font-medium text-gray-600">Estado:</span>
+                  <p class="mt-1">
+                    <span :class="['inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold', getStatusClass(currentUser.status)]">
+                      <div class="w-2 h-2 rounded-full" :class="currentUser.status === 'active' ? 'bg-emerald-500' : 'bg-red-500'"></div>
+                      {{ getStatusLabel(currentUser.status) }}
+                    </span>
+                  </p>
+                </div>
+                <div>
+                  <span class="text-sm font-medium text-gray-600">Email Verificado:</span>
+                  <div class="flex items-center gap-2 mt-1">
+                    <svg v-if="currentUser.emailVerified" class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <svg v-else class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-sm text-gray-900 font-medium">{{ currentUser.emailVerified ? 'Verificado' : 'No verificado' }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Teléfono</label>
-            <input
-              v-model="userForm.phone"
-              type="tel"
-              class="w-full px-4 py-3 border border-slate-300 rounded-xl bg-white text-sm text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
-              placeholder="+1 234 567 8900"
-            />
-          </div>
+            <!-- Fechas -->
+            <div class="bg-slate-50 rounded-xl p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Registro
+              </h3>
+              <div class="space-y-3">
+                <div>
+                  <span class="text-sm font-medium text-gray-600">Fecha de Registro:</span>
+                  <p class="text-sm text-gray-900 font-medium">{{ formatDate(currentUser.createdAt) }}</p>
+                </div>
+                <div>
+                  <span class="text-sm font-medium text-gray-600">Última Actualización:</span>
+                  <p class="text-sm text-gray-900 font-medium">{{ formatDate(currentUser.updatedAt) }}</p>
+                </div>
+              </div>
+            </div>
 
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Rol *</label>
-            <select
-              v-model="userForm.role"
-              required
-              class="w-full px-4 py-3 border border-slate-300 rounded-xl bg-white text-sm text-slate-900 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
-            >
-              <option value="cliente">Cliente</option>
-              <option value="barbero">Barbero</option>
-              <option value="admin">Administrador</option>
-            </select>
-          </div>
-
-          <div v-if="!editingUser" class="md:col-span-2">
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Contraseña *</label>
-            <input
-              v-model="userForm.password"
-              type="password"
-              :required="!editingUser"
-              class="w-full px-4 py-3 border border-slate-300 rounded-xl bg-white text-sm text-slate-900 placeholder-slate-500 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
-              placeholder="Mínimo 8 caracteres"
-            />
+            <!-- ID del Sistema -->
+            <div class="bg-slate-50 rounded-xl p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                Sistema
+              </h3>
+              <div class="space-y-3">
+                <div>
+                  <span class="text-sm font-medium text-gray-600">ID de Usuario:</span>
+                  <p class="text-xs text-gray-500 font-mono break-all">{{ currentUser.id }}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+        
+        <div class="flex justify-end gap-3 px-8 py-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+          <button @click="closeViewModal" class="px-6 py-3 bg-white text-gray-600 border border-gray-300 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
+            Cerrar
+          </button>
+          <button @click="editFromView" class="px-6 py-3 bg-violet-600 text-white border-0 rounded-xl font-medium transition-all duration-200 hover:bg-violet-700">
+            Editar Usuario
+          </button>
+        </div>
+      </div>
+    </div>
 
-        <div class="flex justify-end gap-3 pt-6 border-t border-slate-200">
-          <button type="button" @click="closeUserModal" class="px-6 py-3 bg-white text-slate-700 border border-slate-300 rounded-xl font-medium hover:bg-slate-50 hover:border-slate-400 transition-all">
+    <!-- Modal de Creación/Edición de Usuario -->
+    <div v-if="showUserModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center px-8 py-6 border-b border-gray-200">
+          <h2 class="text-xl font-semibold text-gray-900">{{ editingUser ? 'Editar Usuario' : 'Crear Usuario' }}</h2>
+          <button @click="closeUserModal" class="p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-all duration-200">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <div class="p-8">
+          <form @submit.prevent="saveUser" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Nombre (editable) -->
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Nombre completo *</label>
+                <input
+                  v-model="userForm.name"
+                  type="text"
+                  required
+                  class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-violet-500 transition-all"
+                  placeholder="Nombre y apellido"
+                />
+              </div>
+
+              <!-- Email (solo lectura si está editando) -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                <input
+                  v-model="userForm.email"
+                  type="email"
+                  required
+                  :readonly="!!editingUser"
+                  :class="[
+                    'w-full px-4 py-3 border rounded-xl text-sm transition-all',
+                    editingUser 
+                      ? 'bg-gray-100 text-gray-600 border-gray-300 cursor-not-allowed' 
+                      : 'bg-white text-gray-900 placeholder-gray-400 border-gray-300 focus:outline-none focus:border-violet-500'
+                  ]"
+                  placeholder="correo@ejemplo.com"
+                />
+                <p v-if="editingUser" class="mt-1 text-xs text-gray-500">El email no puede modificarse</p>
+              </div>
+
+              <!-- Teléfono (editable) -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                <input
+                  v-model="userForm.phone"
+                  type="tel"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-violet-500 transition-all"
+                  placeholder="+591 765 43210"
+                />
+              </div>
+
+              <!-- Rol (editable) -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Rol *</label>
+                <select
+                  v-model="userForm.role"
+                  required
+                  class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm text-gray-900 focus:outline-none focus:border-violet-500 transition-all"
+                >
+                  <option value="cliente">Cliente</option>
+                  <option value="barbero">Barbero</option>
+                  <option value="admin">Administrador</option>
+                </select>
+              </div>
+
+              <!-- Estado (editable solo en edición) -->
+              <div v-if="editingUser">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Estado *</label>
+                <select
+                  v-model="userForm.status"
+                  required
+                  class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm text-gray-900 focus:outline-none focus:border-violet-500 transition-all"
+                >
+                  <option value="active">Activo</option>
+                  <option value="inactive">Inactivo</option>
+                </select>
+              </div>
+
+              <!-- Contraseña (obligatoria en creación, opcional en edición) -->
+              <div :class="editingUser ? 'md:col-span-2' : 'md:col-span-2'">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Contraseña {{ editingUser ? '(opcional - dejar vacío para mantener)' : '*' }}
+                </label>
+                <input
+                  v-model="userForm.password"
+                  type="password"
+                  :required="!editingUser"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-violet-500 transition-all"
+                  :placeholder="editingUser ? 'Dejar vacío para no cambiar' : 'Mínimo 8 caracteres'"
+                />
+                <p v-if="editingUser" class="mt-1 text-xs text-gray-500">Solo completa este campo si deseas cambiar la contraseña</p>
+              </div>
+            </div>
+          </form>
+        </div>
+        
+        <div class="flex justify-end gap-3 px-8 py-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+          <button @click="closeUserModal" class="px-6 py-3 bg-white text-gray-600 border border-gray-300 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
             Cancelar
           </button>
-          <button type="submit" :disabled="savingUser" class="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none transition-all">
+          <button @click="saveUser" :disabled="savingUser" class="px-6 py-3 bg-violet-600 text-white border-0 rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-violet-700">
             <span v-if="savingUser" class="flex items-center gap-2">
               <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -421,80 +659,71 @@
             </span>
           </button>
         </div>
-      </form>
-    </AdminModal>
+      </div>
+    </div>
 
     <!-- Modal de Cambio de Rol Masivo -->
-    <AdminModal
-      :show="showBulkRoleModal"
-      title="Cambiar Rol Masivo"
-      @close="closeBulkRoleModal"
-      showActions
-    >
-      <form @submit.prevent="confirmBulkRoleChange" class="space-y-6">
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-2">Nuevo rol para usuarios seleccionados</label>
-          <select
-            v-model="bulkRoleForm.newRole"
-            required
-            class="w-full px-4 py-3 border border-slate-300 rounded-xl bg-white text-sm text-slate-900 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
-          >
-            <option value="cliente">Cliente</option>
-            <option value="barbero">Barbero</option>
-            <option value="admin">Administrador</option>
-          </select>
-        </div>
-        
-        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
-          <div class="flex items-start gap-3">
-            <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.081 16.5c-.77.833.192 2.5 1.732 2.5z" />
+    <div v-if="showBulkRoleModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+        <div class="flex justify-between items-center px-8 py-6 border-b border-gray-200">
+          <h2 class="text-xl font-semibold text-gray-900">Cambiar Rol Masivo</h2>
+          <button @click="closeBulkRoleModal" class="p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 rounded-lg transition-all duration-200">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-            <div class="flex-1">
-              <p class="text-sm font-medium text-amber-800 mb-1">Cambio de rol masivo</p>
-              <p class="text-sm text-amber-700">
-                Se cambiará el rol de <span class="font-semibold">{{ selectedUsers.length }} usuario(s)</span> seleccionado(s) al rol seleccionado.
-              </p>
-            </div>
-          </div>
+          </button>
         </div>
         
-        <div class="flex justify-end gap-3 pt-4">
-          <button type="button" @click="closeBulkRoleModal" class="px-6 py-3 bg-white text-slate-700 border border-slate-300 rounded-xl font-medium hover:bg-slate-50 hover:border-slate-400 transition-all">
+        <div class="p-8">
+          <form @submit.prevent="confirmBulkRoleChange" class="space-y-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Nuevo Rol</label>
+              <select
+                v-model="bulkRoleForm.newRole"
+                required
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-sm text-gray-900 focus:outline-none focus:border-violet-500 transition-all"
+              >
+                <option value="cliente">Cliente</option>
+                <option value="barbero">Barbero</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </div>
+            
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+              <div class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <div>
+                  <h4 class="text-sm font-semibold text-amber-900 mb-1">Advertencia</h4>
+                  <p class="text-sm text-amber-800">
+                    Esta acción cambiará el rol de {{ selectedUsers.length }} usuario(s) seleccionado(s). Esta acción no se puede deshacer.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        
+        <div class="flex justify-end gap-3 px-8 py-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+          <button @click="closeBulkRoleModal" class="px-6 py-3 bg-white text-gray-600 border border-gray-300 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
             Cancelar
           </button>
-          <button type="submit" :disabled="savingUser" class="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-purple-700 hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none transition-all">
-            <span v-if="savingUser" class="flex items-center gap-2">
-              <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Cambiando...
-            </span>
-            <span v-else>Cambiar Rol</span>
+          <button @click="confirmBulkRoleChange" class="px-6 py-3 bg-violet-600 text-white border-0 rounded-xl font-medium transition-all duration-200 hover:bg-violet-700">
+            Cambiar Rol
           </button>
         </div>
-      </form>
-    </AdminModal>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { ref, computed, onMounted } from 'vue'
-import AdminCard from '@/components/admin/AdminCard.vue'
-import AdminTable from '@/components/admin/AdminTable.vue'
-import AdminModal from '@/components/admin/AdminModal.vue'
-import AdminButton from '@/components/admin/AdminButton.vue'
 import { userService } from '@/services/userService'
 
 export default {
   name: 'AdminUsuarios',
-  components: {
-    AdminCard,
-    AdminTable,
-    AdminModal,
-    AdminButton
-  },
   setup() {
     // Estado reactivo
     const loadingStats = ref(true)
@@ -512,10 +741,11 @@ export default {
     })
     
     // Filtros
+    const searchTerm = ref('')
+    const sortBy = ref('nombre_asc')
     const filters = ref({
       role: '',
-      status: '',
-      dateRange: ''
+      status: ''
     })
     
     // Paginación
@@ -524,8 +754,10 @@ export default {
     
     // Modales
     const showUserModal = ref(false)
+    const showViewModal = ref(false)
     const showBulkRoleModal = ref(false)
     const editingUser = ref(null)
+    const currentUser = ref(null)
     
     // Formularios
     const userForm = ref({
@@ -533,6 +765,7 @@ export default {
       email: '',
       phone: '',
       role: 'cliente', // Valor por defecto según la BD
+      status: 'active',
       password: ''
     })
     
@@ -553,6 +786,16 @@ export default {
     const filteredUsers = computed(() => {
       let filtered = [...users.value]
       
+      // Filtro por término de búsqueda
+      if (searchTerm.value) {
+        const term = searchTerm.value.toLowerCase()
+        filtered = filtered.filter(user => 
+          user.name?.toLowerCase().includes(term) ||
+          user.email?.toLowerCase().includes(term) ||
+          user.phone?.toLowerCase().includes(term)
+        )
+      }
+      
       if (filters.value.role) {
         // Mapear filtros del frontend a los roles de la BD
         const roleMap = {
@@ -568,23 +811,26 @@ export default {
         filtered = filtered.filter(user => user.status === filters.value.status)
       }
       
-      if (filters.value.dateRange) {
-        const now = new Date()
-        const filterDate = new Date()
-        
-        switch (filters.value.dateRange) {
-          case 'today':
-            filterDate.setHours(0, 0, 0, 0)
-            break
-          case 'week':
-            filterDate.setDate(now.getDate() - 7)
-            break
-          case 'month':
-            filterDate.setMonth(now.getMonth() - 1)
-            break
-        }
-        
-        filtered = filtered.filter(user => new Date(user.createdAt) >= filterDate)
+      // Ordenamiento
+      if (sortBy.value) {
+        filtered.sort((a, b) => {
+          switch (sortBy.value) {
+            case 'nombre_asc':
+              return (a.name || '').localeCompare(b.name || '')
+            case 'nombre_desc':
+              return (b.name || '').localeCompare(a.name || '')
+            case 'email_asc':
+              return (a.email || '').localeCompare(b.email || '')
+            case 'email_desc':
+              return (b.email || '').localeCompare(a.email || '')
+            case 'fecha_desc':
+              return new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+            case 'fecha_asc':
+              return new Date(a.createdAt || 0) - new Date(b.createdAt || 0)
+            default:
+              return 0
+          }
+        })
       }
       
       return filtered
@@ -602,6 +848,11 @@ export default {
     const totalPages = computed(() => Math.ceil(totalUsers.value / itemsPerPage))
     const startItem = computed(() => (currentPage.value - 1) * itemsPerPage + 1)
     const endItem = computed(() => Math.min(currentPage.value * itemsPerPage, totalUsers.value))
+    
+    // Computed para filtros activos
+    const hasActiveFilters = computed(() => {
+      return !!(searchTerm.value || filters.value.role || filters.value.status)
+    })
     
     // Métodos
     const loadUsers = async () => {
@@ -658,10 +909,11 @@ export default {
     }
     
     const clearFilters = () => {
+      searchTerm.value = ''
+      sortBy.value = 'nombre_asc'
       filters.value = {
         role: '',
-        status: '',
-        dateRange: ''
+        status: ''
       }
       currentPage.value = 1
     }
@@ -690,6 +942,7 @@ export default {
         email: '',
         phone: '',
         role: 'cliente', // Valor por defecto según la BD
+        status: 'active',
         password: ''
       }
     }
@@ -705,6 +958,23 @@ export default {
       editingUser.value = null
     }
     
+    const closeViewModal = () => {
+      showViewModal.value = false
+      currentUser.value = null
+    }
+    
+    const viewUserDetails = (user) => {
+      currentUser.value = user
+      showViewModal.value = true
+    }
+    
+    const editFromView = () => {
+      if (currentUser.value) {
+        editUser(currentUser.value)
+        closeViewModal()
+      }
+    }
+    
     const editUser = (user) => {
       editingUser.value = user
       userForm.value = {
@@ -712,6 +982,7 @@ export default {
         email: user.email,
         phone: user.phone || '',
         role: user.role,
+        status: user.status || 'active',
         password: ''
       }
       showUserModal.value = true
@@ -746,12 +1017,6 @@ export default {
       } catch (error) {
         console.error('Error toggling user status:', error)
       }
-    }
-    
-    const viewUserDetails = (user) => {
-      // Método para ver detalles del usuario - implementar según necesidades
-      console.log('Viewing user details:', user)
-      editUser(user) // Por ahora redirige a editar
     }
     
     // Acciones masivas
@@ -826,18 +1091,16 @@ export default {
     
     const getStatusClass = (status) => {
       const classes = {
-        active: 'status-available',
-        inactive: 'status-unavailable',
-        suspended: 'status-unavailable'
+        active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        inactive: 'bg-red-50 text-red-700 border-red-200'
       }
-      return classes[status] || 'status-unavailable'
+      return classes[status] || 'bg-gray-50 text-gray-700 border-gray-200'
     }
     
     const getStatusLabel = (status) => {
       const labels = {
         active: 'Activo',
-        inactive: 'Inactivo',
-        suspended: 'Suspendido'
+        inactive: 'Inactivo'
       }
       return labels[status] || status
     }
@@ -849,6 +1112,23 @@ export default {
         month: 'short',
         day: 'numeric'
       })
+    }
+    
+    const getRoleFilterLabel = (role) => {
+      const labels = {
+        'client': 'Clientes',
+        'barber': 'Barberos',
+        'admin': 'Administradores'
+      }
+      return labels[role] || role
+    }
+    
+    const getStatusFilterLabel = (status) => {
+      const labels = {
+        'active': 'Activos',
+        'inactive': 'Inactivos'
+      }
+      return labels[status] || status
     }
     
     // Verificar autenticación antes de cargar datos
@@ -889,6 +1169,8 @@ export default {
       users,
       selectedUsers,
       stats,
+      searchTerm,
+      sortBy,
       filters,
       currentPage,
       totalPages,
@@ -898,8 +1180,10 @@ export default {
       
       // Modales
       showUserModal,
+      showViewModal,
       showBulkRoleModal,
       editingUser,
+      currentUser,
       
       // Formularios
       userForm,
@@ -911,6 +1195,7 @@ export default {
       // Computed
       filteredUsers,
       paginatedUsers,
+      hasActiveFilters,
       
       // Métodos
       clearFilters,
@@ -919,10 +1204,12 @@ export default {
       nextPage,
       openCreateModal,
       closeUserModal,
+      closeViewModal,
+      viewUserDetails,
+      editFromView,
       editUser,
       saveUser,
       toggleUserStatus,
-      viewUserDetails,
       bulkActivate,
       bulkDeactivate,
       bulkChangeRole,
@@ -935,41 +1222,16 @@ export default {
       getRoleLabel,
       getStatusClass,
       getStatusLabel,
-      formatDate
+      formatDate,
+      getRoleFilterLabel,
+      getStatusFilterLabel
     }
   }
 }
 </script>
 
 <style scoped>
-/* AdminUsuarios.vue - Modernizado con Tailwind CSS v4 */
-/* CSS personalizado eliminado - Migrado completamente a Tailwind utilities */
-/* Reducción del ~95% del CSS original (de 1,200+ líneas a ~30 líneas) */
-
-/* Clases auxiliares para helpers JavaScript */
-.status-available {
-  background: rgb(236 253 245);
-  color: rgb(6 95 70);
-  border: 1px solid rgb(16 185 129);
-}
-
-.status-unavailable {
-  background: rgb(254 226 226);
-  color: rgb(153 27 27);
-  border: 1px solid rgb(239 68 68);
-}
-
-/* Compatibilidad con badges de roles del JavaScript */
-.bg-red-100 { background-color: rgb(254 226 226); }
-.text-red-800 { color: rgb(153 27 27); }
-.border-red-200 { border-color: rgb(254 202 202); }
-.bg-purple-100 { background-color: rgb(243 232 255); }
-.text-purple-800 { color: rgb(107 33 168); }
-.border-purple-200 { border-color: rgb(221 214 254); }
-.bg-blue-100 { background-color: rgb(219 234 254); }
-.text-blue-800 { color: rgb(30 64 175); }
-.border-blue-200 { border-color: rgb(191 219 254); }
-.bg-gray-100 { background-color: rgb(248 250 252); }
-.text-gray-800 { color: rgb(71 85 105); }
-.border-gray-200 { border-color: rgb(226 232 240); }
+/* AdminUsuarios.vue - Tailwind CSS v4 */
+/* Todas las utilidades son nativas de Tailwind v4 */
+/* No se requiere CSS custom - 100% utility-first */
 </style>

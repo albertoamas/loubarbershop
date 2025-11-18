@@ -8,14 +8,24 @@ import apiClient from './api.js'
 export const barberService = {
   /**
    * Obtener todos los barberos
+   * @param {boolean} showAll - Si es true, obtiene todos los barberos (incluso desactivados)
    * @returns {Promise}
    */
-  async getAll() {
+  async getAll(showAll = false) {
     try {
-      const response = await apiClient.get('/api/barbers')
-      // El backend devuelve { barbers: [...], total: number }
-      // Retornamos solo el array de barberos para consistencia
-      return response.data.barbers || []
+      const params = showAll ? { show_all: 'true' } : {}
+      const response = await apiClient.get('/api/barbers', { params })
+      console.log('🔍 Respuesta completa del backend:', response)
+      console.log('🔍 response.data:', response.data)
+      console.log('🔍 response.data.barbers:', response.data.barbers)
+      console.log('🔍 response.data.data:', response.data.data)
+      
+      // El backend puede devolver en diferentes formatos
+      // Intentar diferentes estructuras de respuesta
+      const barbers = response.data.barbers || response.data.data || response.data || []
+      console.log('✅ Barberos extraídos:', barbers)
+      
+      return barbers
     } catch (error) {
       console.error('Error fetching barbers:', error)
       // Fallback data
