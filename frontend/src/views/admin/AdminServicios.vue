@@ -237,106 +237,114 @@
     </div>
 
     <!-- Grid de servicios modernizado con Tailwind v4 -->
-    <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-200">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div class="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 shadow-sm border border-slate-200">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         <div
           v-for="service in paginatedServices"
           :key="service.id"
-          class="bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
+          class="bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group flex flex-col"
           @click="selectService(service)"
         >
           <!-- Imagen del servicio -->
-          <div class="relative mb-4">
+          <div class="relative mb-3 sm:mb-4">
             <img 
               :src="service.image || getDefaultServiceImage(service.category)" 
               :alt="service.name"
-              class="w-full h-32 object-cover rounded-xl border border-slate-200"
+              class="w-full h-28 sm:h-32 object-cover rounded-xl border border-slate-200"
             />
-            <div class="absolute top-3 right-3">
+            <div class="absolute top-2 sm:top-3 right-2 sm:right-3">
               <div :class="[
-                'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold',
+                'inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[10px] sm:text-xs font-semibold',
                 service.status === 'active' 
                   ? 'bg-emerald-100 text-emerald-700' 
                   : 'bg-red-100 text-red-700'
               ]">
                 <div :class="[
-                  'w-2 h-2 rounded-full',
+                  'w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full',
                   service.status === 'active' ? 'bg-emerald-500' : 'bg-red-500'
                 ]"></div>
-                <span>{{ service.status === 'active' ? 'Activo' : 'Inactivo' }}</span>
+                <span class="hidden sm:inline">{{ service.status === 'active' ? 'Activo' : 'Inactivo' }}</span>
               </div>
             </div>
           </div>
 
-          <!-- Información del servicio -->
-          <div class="space-y-4">
+          <!-- Información del servicio - Flex grow para empujar los botones abajo -->
+          <div class="flex flex-col flex-grow space-y-2.5 sm:space-y-3">
             <!-- Header con nombre y categoría -->
-            <div class="flex items-start justify-between gap-3">
-              <h3 class="text-lg font-bold text-slate-800 leading-tight group-hover:text-black transition-colors duration-200">
-                {{ service.name }}
-              </h3>
-              <span :class="[
-                'inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-wide',
-                getCategoryBadgeClass(service.category || 'default')
-              ]">
-                {{ getCategoryLabel(service.category) }}
-              </span>
+            <div class="flex flex-col gap-2">
+              <div class="flex items-start justify-between gap-2">
+                <h3 class="text-sm sm:text-base font-bold text-slate-800 leading-tight group-hover:text-black transition-colors duration-200 line-clamp-2 flex-1">
+                  {{ service.name }}
+                </h3>
+                <span :class="[
+                  'inline-flex shrink-0 px-2 py-0.5 rounded-lg text-[9px] sm:text-[10px] font-semibold uppercase tracking-wide whitespace-nowrap',
+                  getCategoryBadgeClass(service.category || 'default')
+                ]">
+                  {{ getCategoryLabel(service.category) }}
+                </span>
+              </div>
             </div>
 
             <!-- Descripción -->
-            <p class="text-sm text-slate-600 line-clamp-2">
+            <p class="text-xs sm:text-sm text-slate-600 line-clamp-2 min-h-[2.5rem]">
               {{ service.description || 'Sin descripción' }}
             </p>
 
             <!-- Detalles en grid -->
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-2 sm:gap-3 py-2">
               <div>
-                <span class="block text-xs font-medium text-slate-500 mb-1">Precio</span>
-                <span class="text-lg font-bold text-violet-600">Bs {{ formatPrice(service.price || 0) }}</span>
+                <span class="block text-[10px] sm:text-xs font-medium text-slate-500 mb-0.5">Precio</span>
+                <span class="text-sm sm:text-base font-bold text-violet-600">Bs {{ formatPrice(service.price || 0) }}</span>
               </div>
               <div>
-                <span class="block text-xs font-medium text-slate-500 mb-1">Duración</span>
-                <span class="text-base font-semibold text-slate-800">{{ service.duration || 0 }} min</span>
+                <span class="block text-[10px] sm:text-xs font-medium text-slate-500 mb-0.5">Duración</span>
+                <span class="text-sm sm:text-base font-semibold text-slate-800">{{ service.duration || 0 }} min</span>
               </div>
             </div>
 
-            <!-- Acciones -->
-            <div class="flex gap-2 pt-4 border-t border-slate-100">
-              <button 
-                @click.stop="viewService(service)" 
-                class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium border rounded-lg transition-all duration-200 bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 hover:border-blue-300"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                </svg>
-                Ver
-              </button>
-              
-              <button 
-                @click.stop="editService(service)" 
-                class="flex items-center gap-1.5 px-3 py-2 text-xs font-medium border rounded-lg transition-all duration-200 bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 hover:border-amber-300"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-                Editar
-              </button>
+            <!-- Acciones - Siempre al final con mt-auto -->
+            <div class="flex flex-col gap-1.5 pt-2 mt-auto border-t border-slate-100">
+              <div class="flex gap-1.5">
+                <button 
+                  @click.stop="viewService(service)" 
+                  class="flex items-center justify-center gap-1 px-2 py-1.5 text-[10px] sm:text-xs font-medium border rounded-lg transition-all duration-200 bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 hover:border-blue-300 flex-1"
+                  title="Ver detalles"
+                >
+                  <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                  <span class="hidden sm:inline">Ver</span>
+                </button>
+                
+                <button 
+                  @click.stop="editService(service)" 
+                  class="flex items-center justify-center gap-1 px-2 py-1.5 text-[10px] sm:text-xs font-medium border rounded-lg transition-all duration-200 bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 hover:border-amber-300 flex-1"
+                  title="Editar servicio"
+                >
+                  <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  <span class="hidden sm:inline">Editar</span>
+                </button>
+              </div>
               
               <button 
                 @click.stop="toggleServiceStatus(service)" 
                 :class="[
-                  'flex items-center gap-1.5 px-3 py-2 text-xs font-medium border rounded-lg transition-all duration-200',
+                  'flex items-center justify-center gap-1 px-2 py-1.5 text-[10px] sm:text-xs font-medium border rounded-lg transition-all duration-200 w-full',
                   service.status === 'active' 
                     ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100 hover:border-red-300' 
                     : 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100 hover:border-green-300'
                 ]"
+                :title="service.status === 'active' ? 'Desactivar servicio' : 'Activar servicio'"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path v-if="service.status === 'active'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                   <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                {{ service.status === 'active' ? 'Desactivar' : 'Activar' }}
+                <span class="hidden sm:inline">{{ service.status === 'active' ? 'Desactivar' : 'Activar' }}</span>
+                <span class="sm:hidden">{{ service.status === 'active' ? 'Off' : 'On' }}</span>
               </button>
             </div>
           </div>
@@ -363,41 +371,41 @@
     </div>
 
     <!-- Paginación modernizada -->
-    <div class="flex items-center justify-between bg-white rounded-2xl p-6 mt-8 shadow-sm border border-slate-200">
-      <div class="text-sm text-slate-600 font-medium">
+    <div class="flex flex-col sm:flex-row items-center justify-between bg-white rounded-2xl p-4 sm:p-6 mt-6 sm:mt-8 shadow-sm border border-slate-200 gap-4">
+      <div class="text-xs sm:text-sm text-slate-600 font-medium order-2 sm:order-1">
         Mostrando {{ startItem }} a {{ endItem }} de {{ totalServices }} servicios
       </div>
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2 sm:gap-4 order-1 sm:order-2">
         <button 
           @click="previousPage"
           :class="[
-            'flex items-center justify-center w-10 h-10 border rounded-xl transition-all duration-200',
+            'flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 border rounded-xl transition-all duration-200',
             currentPage === 1 
               ? 'border-slate-200 text-slate-400 cursor-not-allowed' 
               : 'border-slate-300 text-slate-600 hover:bg-slate-50 hover:border-slate-400'
           ]"
           :disabled="currentPage === 1"
         >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
         
-        <span class="text-sm font-semibold text-slate-700 px-4">
+        <span class="text-xs sm:text-sm font-semibold text-slate-700 px-2 sm:px-4 whitespace-nowrap">
           Página {{ currentPage }} de {{ totalPages }}
         </span>
         
         <button 
           @click="nextPage"
           :class="[
-            'flex items-center justify-center w-10 h-10 border rounded-xl transition-all duration-200',
+            'flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 border rounded-xl transition-all duration-200',
             currentPage >= totalPages 
               ? 'border-slate-200 text-slate-400 cursor-not-allowed' 
               : 'border-slate-300 text-slate-600 hover:bg-slate-50 hover:border-slate-400'
           ]"
           :disabled="currentPage >= totalPages"
         >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
         </button>
@@ -405,28 +413,37 @@
     </div>
 
     <!-- Acciones masivas modernizadas -->
-    <div v-if="selectedServices.length > 0" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-white rounded-2xl p-6 shadow-2xl border border-slate-200 z-50 backdrop-blur-sm bg-white/95">
-      <div class="flex items-center gap-6">
-        <div class="text-sm text-slate-600 font-medium">
+    <div v-if="selectedServices.length > 0" class="fixed bottom-4 sm:bottom-8 left-4 right-4 sm:left-1/2 sm:right-auto sm:transform sm:-translate-x-1/2 bg-white rounded-2xl p-4 sm:p-6 shadow-2xl border border-slate-200 z-50 backdrop-blur-sm bg-white/95 max-w-full sm:max-w-fit">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-6">
+        <div class="text-sm text-slate-600 font-medium text-center sm:text-left">
           {{ selectedServices.length }} servicio(s) seleccionado(s)
         </div>
-        <div class="flex gap-3">
+        <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <button 
             @click="bulkActivate" 
-            class="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 rounded-xl text-sm font-semibold transition-all duration-200"
+            class="px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap"
           >
+            <svg class="w-4 h-4 inline mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
             Activar Seleccionados
           </button>
           <button 
             @click="bulkDeactivate" 
-            class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-xl text-sm font-semibold transition-all duration-200"
+            class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap"
           >
+            <svg class="w-4 h-4 inline mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
             Desactivar Seleccionados
           </button>
           <button 
             @click="bulkUpdateCategory" 
-            class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200 rounded-xl text-sm font-semibold transition-all duration-200"
+            class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap"
           >
+            <svg class="w-4 h-4 inline mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>
             Cambiar Categoría
           </button>
         </div>
